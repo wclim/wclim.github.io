@@ -9,7 +9,7 @@ html, body{
 
 
 
-.underConstruction {
+.underConstruction, .offline {
 	font-size: 35pt;
 	text-align: center;
 	background:   #F7DB4F !important;
