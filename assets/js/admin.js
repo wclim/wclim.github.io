@@ -5,5 +5,5 @@ websiteStates = {
 }
 
 var webSite = {
-	state: 0
+	state: 2
 }
