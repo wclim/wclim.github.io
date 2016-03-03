@@ -5,21 +5,45 @@ html, body{
 	font-weight: normal;
 	width:100%;
 	height:100%;
+	color: black;
 }
 
 
 
 .underConstruction, .offline {
-	font-size: 35pt;
-	text-align: center;
 	background:   #F7DB4F !important;
-	color: black;
 }
 
-.constructionMessage {
+.constructionMessage, #loadingMessage {
+	font-size: 35pt;
+	text-align: center;
 	position: relative;
 	top: 50%;
   	transform: translateY(-50%);
+}
+
+#mainContent {
+    display: none;
+}
+
+#loading.fade-out{
+   	opacity: 0;
+}
+
+#loading {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    width: 100vw;
+    height: 100vh;
+    background-color: #E5FCC2;
+    -webkit-transition: opacity 1.5s ease-in-out;
+    -moz-transition: opacity 1.5s ease-in-out;
+    -ms-transition: opacity 1.5s ease-in-out;
+    -o-transition: opacity 1.5s ease-in-out;
+    opacity: 1;
 }
 
 
