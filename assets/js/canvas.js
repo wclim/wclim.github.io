@@ -1,14 +1,19 @@
 const LEFTMARGIN = 5;
 const RIGHTMARGIN = 20;
+const DEFAULTSPEED = 700;
+const TITLE = "Lim Wei Cheng";
+const SUBTITLE = "Just another rather average being";
 
 var canvas = document.getElementById('myCanvas');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-var mapWidth = 5000;
-var mapHeight = 1500;
+var mapWidth = canvas.width*1.1;
+var mapHeight = Math.max(3000, canvas.height);
 var ctx = canvas.getContext('2d');
 var bgReady = false;
 var bgImage = new Image();
+var roadImage = new Image();
+var fenceImageVer = new Image(),fenceImageHor = new Image();
 var characterReady = false;
 var characterS = new Image(), characterS1 = new Image(), characterS2 = new Image();
 var characterN = new Image(), characterN1 = new Image(), characterN2 = new Image();
@@ -31,8 +36,8 @@ const characterDirection = {
 } 
 
 var me = {
-	speed: 256, // movement in pixels per second
-	walkingTimer: 256,
+	speed: DEFAULTSPEED, // movement in pixels per second
+	walkingTimer: DEFAULTSPEED,
 	walkAnimation: 0,
 	direction: characterDirection.S,
 	width: 0,
@@ -46,16 +51,20 @@ window.onresize = function(event) {
 
 function resize_canvas(){
     canvas.width  = window.innerWidth;
+    mapWidth = canvas.width*1.1;
     canvas.height = window.innerHeight;
+    init();
 }
 
-function generate_terrain(){
+function load_terrain(){
 	bgImage.onload = function () {
 		bgReady = true;
 	};
 	bgImage.src = "assets/images/sprites/terrain/forest_tiles.png";
+	roadImage.src = "assets/images/sprites/terrain/road.png";
+	fenceImageHor.src = "assets/images/sprites/terrain/fence_hor.png", fenceImageVer.src = "assets/images/sprites/terrain/fence_ver.png";
 }
-function generate_character(){
+function load_character(){
 	characterS.onload = function () {
 			characterReady = true;
 			me.width = characterS.naturalWidth;
@@ -71,12 +80,29 @@ function generate_character(){
 	characterNE.src = "assets/images/sprites/characters/meNE.png",characterNE1.src = "assets/images/sprites/characters/meNE1.png",characterNE2.src = "assets/images/sprites/characters/meNE2.png";
 }
 
+function load_roads_fences(){
+	fences = [], roads = [];
+	fences.push(new fence(1, mapWidth/2-1.5*ROADWIDTH/2-fenceImageVer.naturalWidth, 0, mapHeight));
+	fences.push(new fence(1, mapWidth/2+1.5*ROADWIDTH/2, 0, mapHeight));
+	fences.push(new fence(0, 0, mapHeight-canvas.height + 150-(fenceImageHor.naturalHeight-2), mapWidth/2-0.75*ROADWIDTH-fenceImageVer.naturalWidth));
+	fences.push(new fence(0, 0, mapHeight-canvas.height + 150+ROADWIDTH, mapWidth/2-0.75*ROADWIDTH-fenceImageVer.naturalWidth));
+	fences.push(new fence(2, mapWidth/2+0.75*ROADWIDTH+fenceImageVer.naturalWidth,mapHeight-ROADWIDTH-143-(fenceImageHor.naturalHeight-2), mapWidth/2));
+	fences.push(new fence(2, mapWidth/2+0.75*ROADWIDTH+fenceImageVer.naturalWidth, mapHeight-143, mapWidth/2));
+
+	roads.push(new road(mapWidth/2-1.5*ROADWIDTH/2,0, 1.5*ROADWIDTH, mapHeight));
+	roads.push(new road(0,mapHeight-canvas.height + 150, mapWidth/2-0.75*ROADWIDTH, ROADWIDTH));
+	roads.push(new road(mapWidth/2+0.75*ROADWIDTH,mapHeight-ROADWIDTH-143, mapWidth/2, ROADWIDTH));
+}
+
 
 var init = function () {
 	me.x = mapWidth/2;
 	me.y = mapHeight-100;
-	generate_terrain();
-	generate_character();
+	load_terrain();
+	load_character();
+	fenceImageHor.onload = function (){
+		load_roads_fences();
+	}
 };
 
 var keysDown = {};
@@ -164,17 +190,99 @@ function clamp(value, min, max){
 
 var render = function () {
 	if (bgReady) {
-		var pat=ctx.createPattern(bgImage,"repeat");
-		ctx.rect(0,0, mapWidth, mapHeight);
-		ctx.fillStyle=pat;
-		ctx.fill();
+		drawTerrain();
+		drawText();
+		drawRoads();
+		drawTextOnRoads();
 	}
 	if (characterReady) {
 		drawCharacter();
 	}
 };
 
+var drawTerrain = function(){
+	var pat=ctx.createPattern(bgImage,"repeat");
+	ctx.rect(0,0, mapWidth, mapHeight);
+	ctx.fillStyle=pat;
+	ctx.fill();
+}
+
+var drawRoads = function(){
+	var pat=ctx.createPattern(roadImage,"repeat");
+	var fenceX, fenceY, flength;
+	ctx.fillStyle=pat;
+
+	for (var i=0; i<fences.length; i++){
+		ctx.save();
+		if (fences[i].type==0){
+			pat=ctx.createPattern(fenceImageHor,"repeat-x");
+			ctx.fillStyle=pat;
+			fenceX = -fences[i].x+fences[i].length;
+			fenceY = fences[i].y;
+			flength = -fences[i].length;
+			ctx.translate(fenceX , fenceY)
+		ctx.fillRect(0,0, flength, fenceImageHor.naturalHeight);
+		}else if (fences[i].type==1){
+			pat=ctx.createPattern(fenceImageVer,"repeat-y");
+			ctx.fillStyle=pat;
+			fenceX = fences[i].x;
+			fenceY = fences[i].y;
+			flength = fences[i].length;
+			ctx.translate(fenceX , fenceY)
+			ctx.fillRect(0,0, fenceImageVer.naturalWidth, flength);
+		}else {
+			pat=ctx.createPattern(fenceImageHor,"repeat-x");
+			ctx.fillStyle=pat;
+			fenceX = fences[i].x;
+			fenceY = fences[i].y;
+			flength = fences[i].length;
+			ctx.translate(fenceX , fenceY)
+			ctx.fillRect(0,0, flength, fenceImageHor.naturalHeight);
+		}
+		ctx.restore();
+	}
+	for (var i=0; i<roads.length; i++){
+		ctx.fillRect(roads[i].x,roads[i].y, roads[i].width, roads[i].length);
+	}
+}
+
+var drawText = function(){
+	ctx.font = canvas.width/64 + "px PressStart";
+	ctx.fillStyle = "rgba(255,255,255,0.5)";
+	ctx.fillText(TITLE, mapWidth/2-canvas.width/2+30, mapHeight-canvas.height+82);
+	ctx.fillStyle = "rgba(0,0,0,0.3)";
+	ctx.fillText(TITLE, mapWidth/2-canvas.width/2+29, mapHeight-canvas.height+79);
+	ctx.fillStyle = "#0f754f";
+	ctx.fillText(TITLE,mapWidth/2-canvas.width/2+30,mapHeight-canvas.height+80);	
+	ctx.font = canvas.width/64 + "px CodersCrux";
+	ctx.fillStyle = "rgba(0,0,0,0.6)";
+	ctx.fillText(SUBTITLE, mapWidth/2-canvas.width/2+35, mapHeight-canvas.height+102);
+}
+
+var drawTextOnRoads = function(){
+	ctx.font = "48px PressStart";
+	ctx.fillStyle = "rgba(255,255,255,0.5)";
+	ctx.fillText("DEAD END", mapWidth/2-1.5*ROADWIDTH/2+30, 82);
+	ctx.fillStyle = "rgba(0,0,0,0.3)";
+	ctx.fillText("DEAD END", mapWidth/2-1.5*ROADWIDTH/2+29, 79);
+	ctx.fillStyle = "#9CA2A8";
+	ctx.fillText("DEAD END",mapWidth/2-1.5*ROADWIDTH/2+30,80);
+}
+
 var drawCharacter = function(){
+	// Draw shadow start
+	ctx.save();
+	ctx.beginPath();
+	ctx.scale(2, 1);
+	ctx.arc(me.x/2+me.width/4, me.y+me.height, 7, 0, 2 * Math.PI, false);
+	ctx.fillStyle = "rgba(0,0,0,0.1)";
+	ctx.fill();
+	ctx.beginPath();
+	ctx.arc(me.x/2+me.width/4, me.y+me.height, 4.5, 0, 2 * Math.PI, false);
+	ctx.fillStyle = "rgba(0,0,0,0.2)";
+	ctx.fill();
+	ctx.restore();
+	// Draw shadow end
 	switch(me.direction){
 		case characterDirection.N:
 			if(me.walkAnimation == 1)ctx.drawImage(characterN1, me.x, me.y);

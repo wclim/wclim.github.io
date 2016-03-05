@@ -7,7 +7,11 @@ if (webSite.state == websiteStates.OFFLINE){
 } else if (webSite.state == websiteStates.ACTIVE){
 	var body = document.getElementsByTagName('body')[0];
 	var script = document.createElement('script');
-	script.src = "assets/js/canvas.js";
+	script.src = "assets/js/canvasObjects.js";
 	script.type = 'text/javascript';
 	body.appendChild(script);
+	var script2 = document.createElement('script');
+	script2.src = "assets/js/canvas.js";
+	script2.type = 'text/javascript';
+	body.appendChild(script2);
 }
