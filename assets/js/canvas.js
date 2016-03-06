@@ -173,7 +173,9 @@ var init = function () {
 	load_terrain();
 	load_character();
 	fenceImageHor.onload = function (){
-		load_roads_fences();
+		fenceImageVer.onload = function (){
+			load_roads_fences();
+		}
 	}
 	treeImage1.onload = function (){
 		load_trees();
