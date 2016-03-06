@@ -1,21 +1,24 @@
 const LEFTMARGIN = 5;
-const RIGHTMARGIN = 20;
-const DEFAULTSPEED = 1000;
-const TITLE = "Lim Wei Cheng";
-const SUBTITLE = "Just another rather average being";
+const RIGHTMARGIN = 10;
+const DEFAULTSPEED = 700;
+const TITLE = "This is a test site"; //Lim Wei Cheng
+const SUBTITLE = "This is also a test"; //Just another rather average being
 var fences = [];
 var roads = [];
+var trees = [];
+var treeCoordinates = [];
 
 var canvas = document.getElementById('myCanvas');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 var mapWidth = canvas.width*1.1;
-var mapHeight = Math.max(3000, canvas.height);
+var mapHeight = Math.max(2500, canvas.height);
 var ctx = canvas.getContext('2d');
 var bgReady = false;
 var bgImage = new Image();
 var roadImage = new Image();
 var fenceImageVer = new Image(),fenceImageHor = new Image();
+var treeImage1 = new Image(), treeImage2 = new Image(), treeImage3 = new Image(), bigTreeImage = new Image();
 var characterReady = false;
 var characterS = new Image(), characterS1 = new Image(), characterS2 = new Image();
 var characterN = new Image(), characterN1 = new Image(), characterN2 = new Image();
@@ -45,7 +48,7 @@ var me = {
 	width: 0,
 	height: 0,
 	x: 0,
-	y: 0,
+	y: mapHeight-100,
 	prevX:0,
 	prevY:0
 };
@@ -69,6 +72,7 @@ function load_terrain(){
 	bgImage.src = "assets/images/sprites/terrain/forest_tiles.png";
 	roadImage.src = "assets/images/sprites/terrain/road.png";
 	fenceImageHor.src = "assets/images/sprites/terrain/fence_hor.png", fenceImageVer.src = "assets/images/sprites/terrain/fence_ver.png";
+	treeImage1.src = "assets/images/sprites/terrain/tree1.png", treeImage2.src = "assets/images/sprites/terrain/tree2.png", treeImage3.src = "assets/images/sprites/terrain/tree3.png", bigTreeImage.src = "assets/images/sprites/terrain/bigtree.png";
 }
 function load_character(){
 	characterS.onload = function () {
@@ -87,16 +91,48 @@ function load_character(){
 }
 
 function load_roads_fences(){
-	fences = [], roads = [];
+	fences = [], roads = [], treeCoordinates = [];
 	var mainRoad = new road(0, mapWidth/2-1.5*ROADWIDTH/2,0, 1.5*ROADWIDTH, mapHeight);
 	
 	roads.push(mainRoad);
 	//build left side roads from bottom to top
-	roads.push(new road(1, 0,mapHeight-canvas.height + 150, mapWidth/2-0.75*ROADWIDTH, ROADWIDTH));
-	roads.push(new road(1, 0,mapHeight-canvas.height - 300, mapWidth/2-0.75*ROADWIDTH, ROADWIDTH));
+	roads.push(new road(1, 0,mapHeight-ROADWIDTH - 150, mapWidth/2-0.75*ROADWIDTH, ROADWIDTH));
+	roads.push(new road(1, 0,mapHeight-ROADWIDTH - 900, mapWidth/2-0.75*ROADWIDTH, ROADWIDTH));
 	//build right side roads from bottom to top
-	roads.push(new road(2, mapWidth/2+0.75*ROADWIDTH,mapHeight-ROADWIDTH-143, mapWidth/2, ROADWIDTH));
-	roads.push(new road(2, mapWidth/2+0.75*ROADWIDTH,mapHeight-ROADWIDTH-599, mapWidth/2, ROADWIDTH));
+	roads.push(new road(2, mapWidth/2+0.75*ROADWIDTH,mapHeight-ROADWIDTH-300, mapWidth/2, ROADWIDTH));
+
+	//plant trees from top to bottom
+	treeCoordinates.push([mainRoad.x-75, 100]);
+	treeCoordinates.push([mainRoad.x-175, 700]);
+	treeCoordinates.push([mainRoad.x-150, 1000]);
+	treeCoordinates.push([mainRoad.x-475, 450]);
+	treeCoordinates.push([mainRoad.x-575, 600]);
+	treeCoordinates.push([mainRoad.x-770, 777]);
+	treeCoordinates.push([mainRoad.x-840, mapHeight - 900]);
+	treeCoordinates.push([mainRoad.x-510, mapHeight - 840]);
+	treeCoordinates.push([mainRoad.x-500, mapHeight - 810]);
+	treeCoordinates.push([mainRoad.x-740, mapHeight - 700]);
+	treeCoordinates.push([mainRoad.x-120, mapHeight - 530]);
+	treeCoordinates.push([mainRoad.x-45, mapHeight - 50]);
+	treeCoordinates.push([mainRoad.x-320, mapHeight - 20]);
+
+	treeCoordinates.push([mainRoad.x2+320, 50]);
+	treeCoordinates.push([mainRoad.x2+270, 300]);
+	treeCoordinates.push([mainRoad.x2+550, 400]);
+	treeCoordinates.push([mainRoad.x2+170, 600]);
+	treeCoordinates.push([mainRoad.x2+400, 1000]);
+	treeCoordinates.push([mainRoad.x2+800, 1150]);
+	treeCoordinates.push([mainRoad.x2+70, 1450]);
+	treeCoordinates.push([mainRoad.x2+500, 1750]);
+	treeCoordinates.push([mainRoad.x2+77, 1700]);
+	treeCoordinates.push([mainRoad.x2+370, mapHeight - 307]);
+	treeCoordinates.push([mainRoad.x2+320, mapHeight - 307]);
+	treeCoordinates.push([mainRoad.x2+270, mapHeight - 307]);
+	treeCoordinates.push([mainRoad.x2+220, mapHeight - 307]);
+	treeCoordinates.push([mainRoad.x2+170, mapHeight - 307]);
+	treeCoordinates.push([mainRoad.x2+120, mapHeight - 307]);
+	treeCoordinates.push([mainRoad.x2+70, mapHeight - 307]);
+	treeCoordinates.push([mainRoad.x2+320, mapHeight - 30]);
 
 	for (var i=0, startYLeft=mapHeight, startYRight=mapHeight, currRoad; i<roads.length; i++){ //to create fences for all roads
 		if(roads[i].type==0) continue;
@@ -122,14 +158,25 @@ function load_roads_fences(){
 	}
 }
 
+function load_trees(){
+	var randominzer=0;
+	trees = [];
+
+	for (var i=0; i<treeCoordinates.length; i++){
+		randominzer = Math.floor(Math.random()*3)+1;
+		trees.push(new tree(randominzer, treeCoordinates[i][0], treeCoordinates[i][1]));
+	}
+}
 
 var init = function () {
 	me.x = mapWidth/2;
-	me.y = mapHeight-100;
 	load_terrain();
 	load_character();
 	fenceImageHor.onload = function (){
 		load_roads_fences();
+	}
+	treeImage1.onload = function (){
+		load_trees();
 	}
 };
 
@@ -245,6 +292,7 @@ var render = function () {
 	if (characterReady) {
 		drawCharacter();
 	}
+	drawTrees();
 };
 
 var drawTerrain = function(){
@@ -301,24 +349,35 @@ var drawRoads = function(){
 var drawText = function(){
 	ctx.font = canvas.width/64 + "px PressStart";
 	ctx.fillStyle = "rgba(0,0,0,0.3)";
-	ctx.fillText(TITLE, mapWidth/2-canvas.width/2+28, mapHeight-canvas.height+83);
+	ctx.fillText(TITLE, mapWidth/2-canvas.width/2+28, mapHeight-83);
 	ctx.fillStyle = "rgba(255,255,255,0.5)";
-	ctx.fillText(TITLE, mapWidth/2-canvas.width/2+30, mapHeight-canvas.height+82);
+	ctx.fillText(TITLE, mapWidth/2-canvas.width/2+30, mapHeight-82);
 	ctx.fillStyle = "#51AD88";
-	ctx.fillText(TITLE,mapWidth/2-canvas.width/2+30,mapHeight-canvas.height+80);	
+	ctx.fillText(TITLE,mapWidth/2-canvas.width/2+30,mapHeight-80);	
 	ctx.font = canvas.width/64 + "px CodersCrux";
 	ctx.fillStyle = "rgba(0,0,0,0.6)";
-	ctx.fillText(SUBTITLE, mapWidth/2-canvas.width/2+35, mapHeight-canvas.height+102);
+	ctx.fillText(SUBTITLE, mapWidth/2-canvas.width/2+35, mapHeight-50);
 }
 
 var drawTextOnRoads = function(){
 	ctx.font = "48px PressStart";
 	ctx.fillStyle = "rgba(255,255,255,0.5)";
-	ctx.fillText("DEAD END", mapWidth/2-1.5*ROADWIDTH/2+30, 82);
+	ctx.fillText("DEAD END", mapWidth/2-1.5*ROADWIDTH/2+30, 182);
 	ctx.fillStyle = "rgba(0,0,0,0.3)";
-	ctx.fillText("DEAD END", mapWidth/2-1.5*ROADWIDTH/2+29, 79);
+	ctx.fillText("DEAD END", mapWidth/2-1.5*ROADWIDTH/2+29, 179);
 	ctx.fillStyle = "#9CA2A8";
-	ctx.fillText("DEAD END",mapWidth/2-1.5*ROADWIDTH/2+30,80);
+	ctx.fillText("DEAD END",mapWidth/2-1.5*ROADWIDTH/2+30,180);
+}
+
+var drawTrees = function(){
+	if(canvas.width>488){
+		ctx.drawImage(bigTreeImage, mapWidth/2-canvas.width/2-55, mapHeight-200);
+	}else{
+		ctx.drawImage(bigTreeImage, mapWidth/2-1.5*ROADWIDTH/2-75, mapHeight-200);
+	}
+	for (var i=0; i<trees.length; i++){
+		ctx.drawImage(eval("treeImage" + trees[i].type), trees[i].x, trees[i].y);
+	}
 }
 
 var drawCharacter = function(){
