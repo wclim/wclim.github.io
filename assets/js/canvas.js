@@ -1,8 +1,10 @@
 const LEFTMARGIN = 5;
 const RIGHTMARGIN = 20;
-const DEFAULTSPEED = 700;
+const DEFAULTSPEED = 1000;
 const TITLE = "Lim Wei Cheng";
 const SUBTITLE = "Just another rather average being";
+var fences = [];
+var roads = [];
 
 var canvas = document.getElementById('myCanvas');
 canvas.width = window.innerWidth;
@@ -41,7 +43,11 @@ var me = {
 	walkAnimation: 0,
 	direction: characterDirection.S,
 	width: 0,
-	height: 0
+	height: 0,
+	x: 0,
+	y: 0,
+	prevX:0,
+	prevY:0
 };
 
 window.onresize = function(event) {
@@ -82,16 +88,38 @@ function load_character(){
 
 function load_roads_fences(){
 	fences = [], roads = [];
-	fences.push(new fence(1, mapWidth/2-1.5*ROADWIDTH/2-fenceImageVer.naturalWidth, 0, mapHeight));
-	fences.push(new fence(1, mapWidth/2+1.5*ROADWIDTH/2, 0, mapHeight));
-	fences.push(new fence(0, 0, mapHeight-canvas.height + 150-(fenceImageHor.naturalHeight-2), mapWidth/2-0.75*ROADWIDTH-fenceImageVer.naturalWidth));
-	fences.push(new fence(0, 0, mapHeight-canvas.height + 150+ROADWIDTH, mapWidth/2-0.75*ROADWIDTH-fenceImageVer.naturalWidth));
-	fences.push(new fence(2, mapWidth/2+0.75*ROADWIDTH+fenceImageVer.naturalWidth,mapHeight-ROADWIDTH-143-(fenceImageHor.naturalHeight-2), mapWidth/2));
-	fences.push(new fence(2, mapWidth/2+0.75*ROADWIDTH+fenceImageVer.naturalWidth, mapHeight-143, mapWidth/2));
+	var mainRoad = new road(0, mapWidth/2-1.5*ROADWIDTH/2,0, 1.5*ROADWIDTH, mapHeight);
+	
+	roads.push(mainRoad);
+	//build left side roads from bottom to top
+	roads.push(new road(1, 0,mapHeight-canvas.height + 150, mapWidth/2-0.75*ROADWIDTH, ROADWIDTH));
+	roads.push(new road(1, 0,mapHeight-canvas.height - 300, mapWidth/2-0.75*ROADWIDTH, ROADWIDTH));
+	//build right side roads from bottom to top
+	roads.push(new road(2, mapWidth/2+0.75*ROADWIDTH,mapHeight-ROADWIDTH-143, mapWidth/2, ROADWIDTH));
+	roads.push(new road(2, mapWidth/2+0.75*ROADWIDTH,mapHeight-ROADWIDTH-599, mapWidth/2, ROADWIDTH));
 
-	roads.push(new road(mapWidth/2-1.5*ROADWIDTH/2,0, 1.5*ROADWIDTH, mapHeight));
-	roads.push(new road(0,mapHeight-canvas.height + 150, mapWidth/2-0.75*ROADWIDTH, ROADWIDTH));
-	roads.push(new road(mapWidth/2+0.75*ROADWIDTH,mapHeight-ROADWIDTH-143, mapWidth/2, ROADWIDTH));
+	for (var i=0, startYLeft=mapHeight, startYRight=mapHeight, currRoad; i<roads.length; i++){ //to create fences for all roads
+		if(roads[i].type==0) continue;
+		currRoad = roads[i];
+		if(currRoad.type==1){
+			fences.push(new fence(0, "bottom", currRoad.x, currRoad.y-fenceImageHor.naturalHeight+2, currRoad.width-fenceImageVer.naturalWidth, currRoad));
+			fences.push(new fence(0, "top", currRoad.x, currRoad.y2, currRoad.width-fenceImageVer.naturalWidth, currRoad));
+			fences.push(new fence(1, "right", mapWidth/2-1.5*ROADWIDTH/2-fenceImageVer.naturalWidth, currRoad.y2, startYLeft-currRoad.y2, mainRoad));
+			startYLeft = currRoad.y;
+			if (currRoad.isLastOne()){
+				fences.push(new fence(1, "right",  mapWidth/2-1.5*ROADWIDTH/2-fenceImageVer.naturalWidth, 0, startYLeft, mainRoad));
+			}
+		}else{
+			fences.push(new fence(2, "bottom", currRoad.x+fenceImageVer.naturalWidth, currRoad.y-fenceImageHor.naturalHeight+2, currRoad.width, currRoad));
+			fences.push(new fence(2, "top", currRoad.x+fenceImageVer.naturalWidth, currRoad.y2, currRoad.width-fenceImageVer.naturalWidth, currRoad));
+			fences.push(new fence(1, "left", mapWidth/2+1.5*ROADWIDTH/2, currRoad.y2, startYRight-currRoad.y2, mainRoad));
+			startYRight = currRoad.y;
+			if (currRoad.isLastOne()){
+				fences.push(new fence(1, "left",  mapWidth/2+1.5*ROADWIDTH/2, 0, startYRight, mainRoad));
+			}
+		}
+		
+	}
 }
 
 
@@ -116,6 +144,8 @@ addEventListener("keyup", function (e) {
 }, false);
 
 var update = function (modifier) {
+	me.prevX = me.x;
+	me.prevY = me.y;
 	if (!((38 in keysDown && 40 in keysDown) || (37 in keysDown && 39 in keysDown))){
 		if (38 in keysDown) { // Player holding up
 			me.direction = characterDirection.N;
@@ -156,14 +186,31 @@ var update = function (modifier) {
 			me.walkAnimation=0;
 		}
 
-		if (me.x < LEFTMARGIN) me.x = LEFTMARGIN;
-	    if (me.y < RIGHTMARGIN) me.y = RIGHTMARGIN;
-	    if (me.x > mapWidth-LEFTMARGIN-me.width) me.x = mapWidth-LEFTMARGIN-me.width;
-	    if (me.y > mapHeight-RIGHTMARGIN-me.height) me.y = mapHeight-RIGHTMARGIN-me.height;
+		checkCollision();
 
 	    setCameraViewPort();
 	}
 };
+
+function checkCollision(){
+	if (me.x < LEFTMARGIN) me.x = LEFTMARGIN;
+    if (me.y < RIGHTMARGIN) me.y = RIGHTMARGIN;
+    if (me.x > mapWidth-LEFTMARGIN-me.width) me.x = mapWidth-LEFTMARGIN-me.width;
+    if (me.y > mapHeight-RIGHTMARGIN-me.height) me.y = mapHeight-RIGHTMARGIN-me.height;
+    if (fences != null){
+    	for (var i=0, collisionIndex; i<fences.length; i++){
+    		collisionIndex = fences[i].collide(me);
+	    	if (collisionIndex == 1){
+	    		me.x = me.prevX;
+	    		break;
+	    	} else if (collisionIndex == 2){
+	    		me.y = me.prevY;
+	    		break;
+	    	}
+	    }
+    }
+    
+}
 
 function setCameraViewPort(){
     ctx.setTransform(1,0,0,1,0,0);
@@ -214,15 +261,7 @@ var drawRoads = function(){
 
 	for (var i=0; i<fences.length; i++){
 		ctx.save();
-		if (fences[i].type==0){
-			pat=ctx.createPattern(fenceImageHor,"repeat-x");
-			ctx.fillStyle=pat;
-			fenceX = -fences[i].x+fences[i].length;
-			fenceY = fences[i].y;
-			flength = -fences[i].length;
-			ctx.translate(fenceX , fenceY)
-		ctx.fillRect(0,0, flength, fenceImageHor.naturalHeight);
-		}else if (fences[i].type==1){
+		if (fences[i].type==1){
 			pat=ctx.createPattern(fenceImageVer,"repeat-y");
 			ctx.fillStyle=pat;
 			fenceX = fences[i].x;
@@ -230,7 +269,15 @@ var drawRoads = function(){
 			flength = fences[i].length;
 			ctx.translate(fenceX , fenceY)
 			ctx.fillRect(0,0, fenceImageVer.naturalWidth, flength);
-		}else {
+		}
+		ctx.restore();
+	}
+	for (var i=0; i<roads.length; i++){
+		ctx.fillRect(roads[i].x,roads[i].y, roads[i].width, roads[i].length);
+	}
+	for (var i=0; i<fences.length; i++){
+		ctx.save();
+		if (fences[i].type==2){
 			pat=ctx.createPattern(fenceImageHor,"repeat-x");
 			ctx.fillStyle=pat;
 			fenceX = fences[i].x;
@@ -238,21 +285,26 @@ var drawRoads = function(){
 			flength = fences[i].length;
 			ctx.translate(fenceX , fenceY)
 			ctx.fillRect(0,0, flength, fenceImageHor.naturalHeight);
+		} else if (fences[i].type==0){
+			pat=ctx.createPattern(fenceImageHor,"repeat-x");
+			ctx.fillStyle=pat;
+			fenceX = -fences[i].x+fences[i].length;
+			fenceY = fences[i].y;
+			flength = -fences[i].length;
+			ctx.translate(fenceX , fenceY)
+		ctx.fillRect(0,0, flength, fenceImageHor.naturalHeight);
 		}
 		ctx.restore();
-	}
-	for (var i=0; i<roads.length; i++){
-		ctx.fillRect(roads[i].x,roads[i].y, roads[i].width, roads[i].length);
 	}
 }
 
 var drawText = function(){
 	ctx.font = canvas.width/64 + "px PressStart";
+	ctx.fillStyle = "rgba(0,0,0,0.3)";
+	ctx.fillText(TITLE, mapWidth/2-canvas.width/2+28, mapHeight-canvas.height+83);
 	ctx.fillStyle = "rgba(255,255,255,0.5)";
 	ctx.fillText(TITLE, mapWidth/2-canvas.width/2+30, mapHeight-canvas.height+82);
-	ctx.fillStyle = "rgba(0,0,0,0.3)";
-	ctx.fillText(TITLE, mapWidth/2-canvas.width/2+29, mapHeight-canvas.height+79);
-	ctx.fillStyle = "#0f754f";
+	ctx.fillStyle = "#51AD88";
 	ctx.fillText(TITLE,mapWidth/2-canvas.width/2+30,mapHeight-canvas.height+80);	
 	ctx.font = canvas.width/64 + "px CodersCrux";
 	ctx.fillStyle = "rgba(0,0,0,0.6)";
