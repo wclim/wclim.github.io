@@ -19,7 +19,7 @@ html, body{
 	background:   #F7DB4F !important;
 }
 
-.constructionMessage, #loadingMessage {
+.constructionMessage{
 	font-size: 35pt;
 	text-align: center;
 	position: relative;
@@ -43,10 +43,15 @@ html, body{
 	z-index: 999;
 }
 
-/*Loader Style ----------------------------------------------------------*/
+/*Loader and stuff styles ----------------------------------------------------------*/
 
-#loading.fade-out{
-   	opacity: 0;
+#loadingMessage {
+	z-index:200;
+	font-size: 35pt;
+	text-align: center;
+	position: relative;
+	top: 50%;
+  	transform: translateY(-50%);
 }
 
 #loading {
@@ -55,15 +60,27 @@ html, body{
     margin: 0;
     top: 0;
     left: 0;
-    z-index: 100;
+    z-index: 200;
     width: 100vw;
     height: 100vh;
     background-color: #E5FCC2;
-    -webkit-transition: opacity 1.5s ease-in-out;
-    -moz-transition: opacity 1.5s ease-in-out;
-    -ms-transition: opacity 1.5s ease-in-out;
-    -o-transition: opacity 1.5s ease-in-out;
     opacity: 1;
+}
+
+#notsupported {
+	position: relative;
+	width: 100%;
+    height: 100%;
+	z-index: 500;
+	background-color: #E5FCC2;
+	text-align: center;
+}
+
+#notsupported p{
+	font-size:50px;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
 }
 
 /*Menu Style ----------------------------------------------------------*/

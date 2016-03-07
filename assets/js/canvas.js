@@ -1,8 +1,9 @@
-const LEFTMARGIN = 5;
-const RIGHTMARGIN = 10;
-const DEFAULTSPEED = 700;
-const TITLE = "This is a test site"; //Lim Wei Cheng
-const SUBTITLE = "This is also a test"; //Just another rather average being
+var LEFTMARGIN = 5;
+var RIGHTMARGIN = 10;
+var DEFAULTSPEED = 700;
+var TITLE = "This is a test site"; //Lim Wei Cheng
+var SUBTITLE = "This is also a test"; //Just another rather average being
+
 var fences = [];
 var roads = [];
 var trees = [];
@@ -29,7 +30,7 @@ var characterNW = new Image(), characterNW1 = new Image(), characterNW2 = new Im
 var characterSE = new Image(), characterSE1 = new Image(), characterSE2 = new Image();
 var characterNE = new Image(), characterNE1 = new Image(), characterNE2 = new Image();
 
-const characterDirection = {
+var characterDirection = {
 	N: 1,
 	NE: 2,
 	E: 3,
@@ -451,7 +452,21 @@ var main = function () {
 	requestAnimationFrame(main);
 };
 var w = window;
-requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
+window.requestAnimationFrame = (function() {
+    return window.requestAnimationFrame     ||
+        window.webkitRequestAnimationFrame  ||
+        window.mozRequestAnimationFrame     ||
+        window.msRequestAnimationFrame      ||
+        function( callback ) { return window.setTimeout( callback, 0); };
+})();
+
+window.cancelAnimationFrame = (function() {
+    return window.cancelAnimationFrame      ||
+        window.webkitCancelAnimationFrame   ||
+        window.mozCancelAnimationFrame      ||
+        window.msCancelAnimationFrame       ||
+        function( intervalKey ) { window.clearTimeout( intervalKey ); };
+})();
 
 var then = Date.now();
 init();

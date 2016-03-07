@@ -1,4 +1,4 @@
-const ROADWIDTH = 300;
+var ROADWIDTH = 300;
 
 var fence = function (type, pos, x, y, length, parent) {
 	this.type = type; //0 for horizontal on left of main road, 1 for vertical, 2 for horizontal on right of main road

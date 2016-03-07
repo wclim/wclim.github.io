@@ -14,10 +14,6 @@ function show(id, value) {
     document.getElementById(id).style.display = value ? 'block' : 'none';
 }
 
-function fadeOut(id) {
-    $(id).addClass("fade-out");
-}
-
 function loadMsg() {
     if (loadingDots==3){
         loadingDots=0;
@@ -33,6 +29,8 @@ var loadingMsgInt = window.setInterval(loadMsg, 500);
 if (webSite.state == websiteStates.ACTIVE){
     onReady(function () {
         show('mainContent', true);
-        fadeOut('#loading');
+        $('#loading').fadeOut(1234, function(){
+            $('#loading').hide();
+        });
     });
 }
