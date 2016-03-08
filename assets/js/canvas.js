@@ -352,11 +352,11 @@ var drawRoads = function(){
 var drawText = function(){
 	ctx.font = canvas.width/64 + "px PressStart";
 	ctx.fillStyle = "rgba(0,0,0,0.3)";
-	ctx.fillText(TITLE, mapWidth/2-canvas.width/2+28, mapHeight-83);
+	ctx.fillText(TITLE, mapWidth/2-canvas.width/2+29, mapHeight-80);
 	ctx.fillStyle = "rgba(255,255,255,0.5)";
-	ctx.fillText(TITLE, mapWidth/2-canvas.width/2+30, mapHeight-82);
+	ctx.fillText(TITLE, mapWidth/2-canvas.width/2+30, mapHeight-81);
 	ctx.fillStyle = "#51AD88";
-	ctx.fillText(TITLE,mapWidth/2-canvas.width/2+30,mapHeight-80);	
+	ctx.fillText(TITLE,mapWidth/2-canvas.width/2+30,mapHeight-83);	
 	ctx.font = canvas.width/64 + "px CodersCrux";
 	ctx.fillStyle = "rgba(0,0,0,0.6)";
 	ctx.fillText(SUBTITLE, mapWidth/2-canvas.width/2+35, mapHeight-50);
