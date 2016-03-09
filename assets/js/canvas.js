@@ -74,7 +74,7 @@ var me = {
 	direction: characterDirection.S,
 	width: 0,
 	height: 0,
-	x: 0,
+	x: mapWidth/2,
 	y: mapHeight-100,
 	prevX:0,
 	prevY:0
@@ -188,14 +188,19 @@ function load_trees(){
 }
 
 var init = function (callback) {
+	if(!onMainRoad(me, roads)){
+		me.x = me.x*(window.innerWidth/canvas.width);
+	}else{
+		me.x = window.innerWidth*1.1/2;
+	}
 	canvas.width  = window.innerWidth;
     mapWidth = canvas.width*1.1;
     canvas.height = window.innerHeight;
-	me.x = mapWidth/2;
 	load_character();
 	load_roads_fences();
 	load_trees();
 	if(callback!=undefined){
+		mainLoopRunning = true;
 		callback();
 	}
 };
@@ -258,6 +263,18 @@ var update = function (modifier) {
 	    setCameraViewPort();
 	}
 };
+
+function onMainRoad(character, roads){
+	for (var i in roads){
+		if (roads[i].type==0){
+			if(character.x >= roads[i].x && (character.x + character.width) <= roads[i].x2){
+				return true;
+			}
+			break;
+		}
+	}
+	return false;
+}
 
 function checkCollision(){
 	if (me.x < LEFTMARGIN) me.x = LEFTMARGIN;
@@ -457,13 +474,15 @@ var drawCharacter = function(){
 }
 
 var main = function () {
-	mainLoopRunning = true;
 	var now = Date.now();
 	var delta = now - then;
 	update(delta / 1000);
 	then = now;
 	render();
-	if (window.innerWidth > 671){
+	if (window.innerWidth < 672){
+		mainLoopRunning = false;
+	}
+	if (mainLoopRunning){
 		requestAnimationFrame(main);
 	}else{
 		mainLoopRunning = false;
@@ -488,3 +507,11 @@ window.cancelAnimationFrame = (function() {
 
 var then = Date.now();
 loadImages(imageSources, init, main); //preload images before initializing other stuff, then finally call main function
+
+$(window).focus(function() {
+	//activate keys handler
+});
+
+$(window).blur(function() {
+	//deactivate keys handler
+});
