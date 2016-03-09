@@ -28,7 +28,6 @@ var loadingDots = 0;
 var loadingMsgInt = window.setInterval(loadMsg, 500);
 if (webSite.state == websiteStates.ACTIVE){
     onReady(function () {
-        show('mainContent', true);
         $('#loading').fadeOut(1234, function(){
             $('#loading').hide();
         });

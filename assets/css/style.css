@@ -26,7 +26,8 @@ html, body{
 	background:   #F7DB4F !important;
 }
 
-.constructionMessage{
+.underConstruction p, .offline p{
+	margin: 10px;
 	font-size: 35pt;
 	text-align: center;
 	position: relative;
@@ -35,7 +36,26 @@ html, body{
 }
 
 #mainContent {
-    display: none;
+    display: block;
+}
+
+#smallScreen{
+	display:none;
+	position:fixed;
+	left:0;
+	top:0;
+	width: 100vw;
+	height:100vh;
+	background:   #F7DB4F !important;
+}
+
+#smallScreen p {
+	margin: 10px;
+	font-size: 35pt;
+	text-align: center;
+	position: relative;
+	top: 50%;
+  	transform: translateY(-50%);
 }
 
 #wrapper, #mainContent, #myCanvas {
@@ -50,9 +70,20 @@ html, body{
 	z-index: 999;
 }
 
+/*Disable for small screens --------------------------------------------------------*/
+@media only screen and (max-width:671px){
+	#mainContent {
+		display:none;
+	}
+
+	#smallScreen {
+		display: block;
+	}
+}
+
 /*Loader and stuff styles ----------------------------------------------------------*/
 
-#loadingMessage {
+#loading p {
 	z-index:200;
 	font-size: 35pt;
 	text-align: center;

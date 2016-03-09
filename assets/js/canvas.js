@@ -9,6 +9,7 @@ var roads = [];
 var trees = [];
 var treeCoordinates = [];
 
+var mainLoopRunning = false;
 var canvas = document.getElementById('myCanvas');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -80,16 +81,13 @@ var me = {
 };
 
 window.onresize = function(event) {
-    resize_canvas();
+	if (mainLoopRunning){
+		init();
+	}else{
+		init(main);
+	}
     render();
 };
-
-function resize_canvas(){
-    canvas.width  = window.innerWidth;
-    mapWidth = canvas.width*1.1;
-    canvas.height = window.innerHeight;
-    init();
-}
 
 //image preloader
 function loadImages(imgSrc, callback, nextCallback){
@@ -190,11 +188,16 @@ function load_trees(){
 }
 
 var init = function (callback) {
+	canvas.width  = window.innerWidth;
+    mapWidth = canvas.width*1.1;
+    canvas.height = window.innerHeight;
 	me.x = mapWidth/2;
 	load_character();
 	load_roads_fences();
 	load_trees();
-	callback();
+	if(callback!=undefined){
+		callback();
+	}
 };
 
 var keysDown = {};
@@ -454,12 +457,17 @@ var drawCharacter = function(){
 }
 
 var main = function () {
+	mainLoopRunning = true;
 	var now = Date.now();
 	var delta = now - then;
 	update(delta / 1000);
 	then = now;
 	render();
-	requestAnimationFrame(main);
+	if (window.innerWidth > 671){
+		requestAnimationFrame(main);
+	}else{
+		mainLoopRunning = false;
+	}
 };
 var w = window;
 window.requestAnimationFrame = (function() {
