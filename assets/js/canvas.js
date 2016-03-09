@@ -1,8 +1,8 @@
 var LEFTMARGIN = 5;
 var RIGHTMARGIN = 10;
 var DEFAULTSPEED = 700;
-var TITLE = "This is a test site"; //Lim Wei Cheng
-var SUBTITLE = "This is also a test"; //Just another rather average being
+var TITLE = "Lim Wei Cheng";
+var SUBTITLE = "Just another rather average being";
 
 var fences = [];
 var roads = [];
@@ -15,20 +15,45 @@ canvas.height = window.innerHeight;
 var mapWidth = canvas.width*1.1;
 var mapHeight = Math.max(2500, canvas.height);
 var ctx = canvas.getContext('2d');
-var bgReady = false;
-var bgImage = new Image();
-var roadImage = new Image();
-var fenceImageVer = new Image(),fenceImageHor = new Image();
-var treeImage1 = new Image(), treeImage2 = new Image(), treeImage3 = new Image(), bigTreeImage = new Image();
-var characterReady = false;
-var characterS = new Image(), characterS1 = new Image(), characterS2 = new Image();
-var characterN = new Image(), characterN1 = new Image(), characterN2 = new Image();
-var characterE = new Image(), characterE1 = new Image(), characterE2 = new Image();
-var characterW = new Image(), characterW1 = new Image(), characterW2 = new Image();
-var characterSW = new Image(), characterSW1 = new Image(), characterSW2 = new Image();
-var characterNW = new Image(), characterNW1 = new Image(), characterNW2 = new Image();
-var characterSE = new Image(), characterSE1 = new Image(), characterSE2 = new Image();
-var characterNE = new Image(), characterNE1 = new Image(), characterNE2 = new Image();
+
+var images = {};
+var imageSources = {
+	//Terrain images
+	bgImage: 			"assets/images/sprites/terrain/forest_tiles.png",
+	roadImage: 			"assets/images/sprites/terrain/road.png",
+	fenceImageVer: 		"assets/images/sprites/terrain/fence_ver.png",
+	fenceImageHor: 		"assets/images/sprites/terrain/fence_hor.png",
+	treeImage1: 		"assets/images/sprites/terrain/tree1.png",
+	treeImage2: 		"assets/images/sprites/terrain/tree2.png",
+	treeImage3: 		"assets/images/sprites/terrain/tree3.png",
+	bigTreeImage: 		"assets/images/sprites/terrain/bigtree.png",
+
+	//Character Images
+	characterS: 		"assets/images/sprites/characters/meS.png",
+	characterS1: 		"assets/images/sprites/characters/meS1.png",
+	characterS2: 		"assets/images/sprites/characters/meS2.png",
+	characterN: 		"assets/images/sprites/characters/meN.png",
+	characterN1: 		"assets/images/sprites/characters/meN1.png",
+	characterN2: 		"assets/images/sprites/characters/meN2.png",
+	characterE: 		"assets/images/sprites/characters/meE.png",
+	characterE1: 		"assets/images/sprites/characters/meE1.png",
+	characterE2: 		"assets/images/sprites/characters/meE2.png",
+	characterW: 		"assets/images/sprites/characters/meW.png",
+	characterW1: 		"assets/images/sprites/characters/meW1.png",
+	characterW2: 		"assets/images/sprites/characters/meW2.png",
+	characterSW: 		"assets/images/sprites/characters/meSW.png",
+	characterSW1: 		"assets/images/sprites/characters/meSW1.png",
+	characterSW2: 		"assets/images/sprites/characters/meSW2.png",
+	characterNW: 		"assets/images/sprites/characters/meNW.png",
+	characterNW1: 		"assets/images/sprites/characters/meNW1.png",
+	characterNW2: 		"assets/images/sprites/characters/meNW2.png",
+	characterSE: 		"assets/images/sprites/characters/meSE.png",
+	characterSE1: 		"assets/images/sprites/characters/meSE1.png",
+	characterSE2: 		"assets/images/sprites/characters/meSE2.png",
+	characterNE: 		"assets/images/sprites/characters/meNE.png",
+	characterNE1: 		"assets/images/sprites/characters/meNE1.png",
+	characterNE2:  		"assets/images/sprites/characters/meNE2.png"
+}
 
 var characterDirection = {
 	N: 1,
@@ -66,29 +91,24 @@ function resize_canvas(){
     init();
 }
 
-function load_terrain(){
-	bgImage.onload = function () {
-		bgReady = true;
-	};
-	bgImage.src = "assets/images/sprites/terrain/forest_tiles.png";
-	roadImage.src = "assets/images/sprites/terrain/road.png";
-	fenceImageHor.src = "assets/images/sprites/terrain/fence_hor.png", fenceImageVer.src = "assets/images/sprites/terrain/fence_ver.png";
-	treeImage1.src = "assets/images/sprites/terrain/tree1.png", treeImage2.src = "assets/images/sprites/terrain/tree2.png", treeImage3.src = "assets/images/sprites/terrain/tree3.png", bigTreeImage.src = "assets/images/sprites/terrain/bigtree.png";
+//image preloader
+function loadImages(imgSrc, callback, nextCallback){
+	var loadedImg = 0;
+	var numImg = Object.keys(imgSrc).length;
+	for (var src in imgSrc){
+		images[src] = new Image();
+		images[src].onload = function(){
+			if(++loadedImg >= numImg){
+				callback(nextCallback);
+			}
+		};
+		images[src].src = imgSrc[src];
+	}
 }
+
 function load_character(){
-	characterS.onload = function () {
-			characterReady = true;
-			me.width = characterS.naturalWidth;
-			me.height = characterS.naturalHeight;
-	};
-	characterS.src = "assets/images/sprites/characters/meS.png",characterS1.src = "assets/images/sprites/characters/meS1.png",characterS2.src = "assets/images/sprites/characters/meS2.png";
-	characterN.src = "assets/images/sprites/characters/meN.png",characterN1.src = "assets/images/sprites/characters/meN1.png",characterN2.src = "assets/images/sprites/characters/meN2.png";
-	characterE.src = "assets/images/sprites/characters/meE.png",characterE1.src = "assets/images/sprites/characters/meE1.png",characterE2.src = "assets/images/sprites/characters/meE2.png";
-	characterW.src = "assets/images/sprites/characters/meW.png",characterW1.src = "assets/images/sprites/characters/meW1.png",characterW2.src = "assets/images/sprites/characters/meW2.png";
-	characterSW.src = "assets/images/sprites/characters/meSW.png",characterSW1.src = "assets/images/sprites/characters/meSW1.png",characterSW2.src = "assets/images/sprites/characters/meSW2.png";
-	characterNW.src = "assets/images/sprites/characters/meNW.png",characterNW1.src = "assets/images/sprites/characters/meNW1.png",characterNW2.src = "assets/images/sprites/characters/meNW2.png";
-	characterSE.src = "assets/images/sprites/characters/meSE.png",characterSE1.src = "assets/images/sprites/characters/meSE1.png",characterSE2.src = "assets/images/sprites/characters/meSE2.png";
-	characterNE.src = "assets/images/sprites/characters/meNE.png",characterNE1.src = "assets/images/sprites/characters/meNE1.png",characterNE2.src = "assets/images/sprites/characters/meNE2.png";
+	me.width = images.characterS.naturalWidth;
+	me.height = images.characterS.naturalHeight;
 }
 
 function load_roads_fences(){
@@ -139,16 +159,16 @@ function load_roads_fences(){
 		if(roads[i].type==0) continue;
 		currRoad = roads[i];
 		if(currRoad.type==1){
-			fences.push(new fence(0, "bottom", currRoad.x, currRoad.y-fenceImageHor.naturalHeight+2, currRoad.width-fenceImageVer.naturalWidth, currRoad));
-			fences.push(new fence(0, "top", currRoad.x, currRoad.y2, currRoad.width-fenceImageVer.naturalWidth, currRoad));
-			fences.push(new fence(1, "right", mapWidth/2-1.5*ROADWIDTH/2-fenceImageVer.naturalWidth, currRoad.y2, startYLeft-currRoad.y2, mainRoad));
+			fences.push(new fence(0, "bottom", currRoad.x, currRoad.y-images.fenceImageHor.naturalHeight+2, currRoad.width-images.fenceImageVer.naturalWidth, currRoad));
+			fences.push(new fence(0, "top", currRoad.x, currRoad.y2, currRoad.width-images.fenceImageVer.naturalWidth, currRoad));
+			fences.push(new fence(1, "right", mapWidth/2-1.5*ROADWIDTH/2-images.fenceImageVer.naturalWidth, currRoad.y2, startYLeft-currRoad.y2, mainRoad));
 			startYLeft = currRoad.y;
 			if (currRoad.isLastOne()){
-				fences.push(new fence(1, "right",  mapWidth/2-1.5*ROADWIDTH/2-fenceImageVer.naturalWidth, 0, startYLeft, mainRoad));
+				fences.push(new fence(1, "right",  mapWidth/2-1.5*ROADWIDTH/2-images.fenceImageVer.naturalWidth, 0, startYLeft, mainRoad));
 			}
 		}else{
-			fences.push(new fence(2, "bottom", currRoad.x+fenceImageVer.naturalWidth, currRoad.y-fenceImageHor.naturalHeight+2, currRoad.width, currRoad));
-			fences.push(new fence(2, "top", currRoad.x+fenceImageVer.naturalWidth, currRoad.y2, currRoad.width-fenceImageVer.naturalWidth, currRoad));
+			fences.push(new fence(2, "bottom", currRoad.x+images.fenceImageVer.naturalWidth, currRoad.y-images.fenceImageHor.naturalHeight+2, currRoad.width, currRoad));
+			fences.push(new fence(2, "top", currRoad.x+images.fenceImageVer.naturalWidth, currRoad.y2, currRoad.width-images.fenceImageVer.naturalWidth, currRoad));
 			fences.push(new fence(1, "left", mapWidth/2+1.5*ROADWIDTH/2, currRoad.y2, startYRight-currRoad.y2, mainRoad));
 			startYRight = currRoad.y;
 			if (currRoad.isLastOne()){
@@ -169,18 +189,12 @@ function load_trees(){
 	}
 }
 
-var init = function () {
+var init = function (callback) {
 	me.x = mapWidth/2;
-	load_terrain();
 	load_character();
-	fenceImageHor.onload = function (){
-		fenceImageVer.onload = function (){
-			load_roads_fences();
-		}
-	}
-	treeImage1.onload = function (){
-		load_trees();
-	}
+	load_roads_fences();
+	load_trees();
+	callback();
 };
 
 var keysDown = {};
@@ -286,40 +300,36 @@ function clamp(value, min, max){
 }
 
 var render = function () {
-	if (bgReady) {
-		drawTerrain();
-		drawText();
-		drawRoads();
-		drawTextOnRoads();
-	}
-	if (characterReady) {
-		drawCharacter();
-	}
+	drawTerrain();
+	drawText();
+	drawRoads();
+	drawTextOnRoads();
+	drawCharacter();
 	drawTrees();
 };
 
 var drawTerrain = function(){
-	var pat=ctx.createPattern(bgImage,"repeat");
+	var pat=ctx.createPattern(images.bgImage,"repeat");
 	ctx.rect(0,0, mapWidth, mapHeight);
 	ctx.fillStyle=pat;
 	ctx.fill();
 }
 
 var drawRoads = function(){
-	var pat=ctx.createPattern(roadImage,"repeat");
+	var pat=ctx.createPattern(images.roadImage,"repeat");
 	var fenceX, fenceY, flength;
 	ctx.fillStyle=pat;
 
 	for (var i=0; i<fences.length; i++){
 		ctx.save();
 		if (fences[i].type==1){
-			pat=ctx.createPattern(fenceImageVer,"repeat-y");
+			pat=ctx.createPattern(images.fenceImageVer,"repeat-y");
 			ctx.fillStyle=pat;
 			fenceX = fences[i].x;
 			fenceY = fences[i].y;
 			flength = fences[i].length;
 			ctx.translate(fenceX , fenceY)
-			ctx.fillRect(0,0, fenceImageVer.naturalWidth, flength);
+			ctx.fillRect(0,0, images.fenceImageVer.naturalWidth, flength);
 		}
 		ctx.restore();
 	}
@@ -329,21 +339,21 @@ var drawRoads = function(){
 	for (var i=0; i<fences.length; i++){
 		ctx.save();
 		if (fences[i].type==2){
-			pat=ctx.createPattern(fenceImageHor,"repeat-x");
+			pat=ctx.createPattern(images.fenceImageHor,"repeat-x");
 			ctx.fillStyle=pat;
 			fenceX = fences[i].x;
 			fenceY = fences[i].y;
 			flength = fences[i].length;
 			ctx.translate(fenceX , fenceY)
-			ctx.fillRect(0,0, flength, fenceImageHor.naturalHeight);
+			ctx.fillRect(0,0, flength, images.fenceImageHor.naturalHeight);
 		} else if (fences[i].type==0){
-			pat=ctx.createPattern(fenceImageHor,"repeat-x");
+			pat=ctx.createPattern(images.fenceImageHor,"repeat-x");
 			ctx.fillStyle=pat;
 			fenceX = -fences[i].x+fences[i].length;
 			fenceY = fences[i].y;
 			flength = -fences[i].length;
 			ctx.translate(fenceX , fenceY)
-		ctx.fillRect(0,0, flength, fenceImageHor.naturalHeight);
+		ctx.fillRect(0,0, flength, images.fenceImageHor.naturalHeight);
 		}
 		ctx.restore();
 	}
@@ -374,12 +384,12 @@ var drawTextOnRoads = function(){
 
 var drawTrees = function(){
 	if(canvas.width>488){
-		ctx.drawImage(bigTreeImage, mapWidth/2-canvas.width/2-55, mapHeight-200);
+		ctx.drawImage(images.bigTreeImage, mapWidth/2-canvas.width/2-55, mapHeight-200);
 	}else{
-		ctx.drawImage(bigTreeImage, mapWidth/2-1.5*ROADWIDTH/2-75, mapHeight-200);
+		ctx.drawImage(images.bigTreeImage, mapWidth/2-1.5*ROADWIDTH/2-75, mapHeight-200);
 	}
 	for (var i=0; i<trees.length; i++){
-		ctx.drawImage(eval("treeImage" + trees[i].type), trees[i].x, trees[i].y);
+		ctx.drawImage(eval("images.treeImage" + trees[i].type), trees[i].x, trees[i].y);
 	}
 }
 
@@ -399,44 +409,44 @@ var drawCharacter = function(){
 	// Draw shadow end
 	switch(me.direction){
 		case characterDirection.N:
-			if(me.walkAnimation == 1)ctx.drawImage(characterN1, me.x, me.y);
-			else if(me.walkAnimation == 3)ctx.drawImage(characterN2, me.x, me.y);
-			else ctx.drawImage(characterN, me.x, me.y);
+			if(me.walkAnimation == 1)ctx.drawImage(images.characterN1, me.x, me.y);
+			else if(me.walkAnimation == 3)ctx.drawImage(images.characterN2, me.x, me.y);
+			else ctx.drawImage(images.characterN, me.x, me.y);
 			break;
 		case characterDirection.NE:
-			if(me.walkAnimation == 1)ctx.drawImage(characterNE1, me.x, me.y);
-			else if(me.walkAnimation == 3)ctx.drawImage(characterNE2, me.x, me.y);
-			else ctx.drawImage(characterNE, me.x, me.y);
+			if(me.walkAnimation == 1)ctx.drawImage(images.characterNE1, me.x, me.y);
+			else if(me.walkAnimation == 3)ctx.drawImage(images.characterNE2, me.x, me.y);
+			else ctx.drawImage(images.characterNE, me.x, me.y);
 			break;
 		case characterDirection.E:
-			if(me.walkAnimation == 1)ctx.drawImage(characterE1, me.x, me.y);
-			else if(me.walkAnimation == 3)ctx.drawImage(characterE2, me.x, me.y);
-			else ctx.drawImage(characterE, me.x, me.y);
+			if(me.walkAnimation == 1)ctx.drawImage(images.characterE1, me.x, me.y);
+			else if(me.walkAnimation == 3)ctx.drawImage(images.characterE2, me.x, me.y);
+			else ctx.drawImage(images.characterE, me.x, me.y);
 			break;
 		case characterDirection.SE:
-			if(me.walkAnimation == 1)ctx.drawImage(characterSE1, me.x, me.y);
-			else if(me.walkAnimation == 3)ctx.drawImage(characterSE2, me.x, me.y);
-			else ctx.drawImage(characterSE, me.x, me.y);
+			if(me.walkAnimation == 1)ctx.drawImage(images.characterSE1, me.x, me.y);
+			else if(me.walkAnimation == 3)ctx.drawImage(images.characterSE2, me.x, me.y);
+			else ctx.drawImage(images.characterSE, me.x, me.y);
 			break;
 		case characterDirection.S:
-			if(me.walkAnimation == 1)ctx.drawImage(characterS1, me.x, me.y);
-			else if(me.walkAnimation == 3)ctx.drawImage(characterS2, me.x, me.y);
-			else ctx.drawImage(characterS, me.x, me.y);
+			if(me.walkAnimation == 1)ctx.drawImage(images.characterS1, me.x, me.y);
+			else if(me.walkAnimation == 3)ctx.drawImage(images.characterS2, me.x, me.y);
+			else ctx.drawImage(images.characterS, me.x, me.y);
 			break;
 		case characterDirection.SW:
-			if(me.walkAnimation == 1)ctx.drawImage(characterSW1, me.x, me.y);
-			else if(me.walkAnimation == 3)ctx.drawImage(characterSW2, me.x, me.y);
-			else ctx.drawImage(characterSW, me.x, me.y);
+			if(me.walkAnimation == 1)ctx.drawImage(images.characterSW1, me.x, me.y);
+			else if(me.walkAnimation == 3)ctx.drawImage(images.characterSW2, me.x, me.y);
+			else ctx.drawImage(images.characterSW, me.x, me.y);
 			break;
 		case characterDirection.W:
-			if(me.walkAnimation == 1)ctx.drawImage(characterW1, me.x, me.y);
-			else if(me.walkAnimation == 3)ctx.drawImage(characterW2, me.x, me.y);
-			else ctx.drawImage(characterW, me.x, me.y);
+			if(me.walkAnimation == 1)ctx.drawImage(images.characterW1, me.x, me.y);
+			else if(me.walkAnimation == 3)ctx.drawImage(images.characterW2, me.x, me.y);
+			else ctx.drawImage(images.characterW, me.x, me.y);
 			break;
 		case characterDirection.NW:
-			if(me.walkAnimation == 1)ctx.drawImage(characterNW1, me.x, me.y);
-			else if(me.walkAnimation == 3)ctx.drawImage(characterNW2, me.x, me.y);
-			else ctx.drawImage(characterNW, me.x, me.y);
+			if(me.walkAnimation == 1)ctx.drawImage(images.characterNW1, me.x, me.y);
+			else if(me.walkAnimation == 3)ctx.drawImage(images.characterNW2, me.x, me.y);
+			else ctx.drawImage(images.characterNW, me.x, me.y);
 			break;
 		default:
 			break;
@@ -469,5 +479,4 @@ window.cancelAnimationFrame = (function() {
 })();
 
 var then = Date.now();
-init();
-main();
+loadImages(imageSources, init, main); //preload images before initializing other stuff, then finally call main function

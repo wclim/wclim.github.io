@@ -30,14 +30,14 @@ fence.prototype.collide = function(character) { //returns 0 for no collision, re
 		if (this.collideFromSide(character)){
 			return 1;
 		}
-		if ((character.x) < this.x + this.length + fenceImageVer.naturalWidth
-			&& (character.x+character.width) > this.x - fenceImageVer.naturalWidth
-			&& (character.y + character.height/1.6) < this.y + fenceImageHor.naturalHeight 
+		if ((character.x) < this.x + this.length + images.fenceImageVer.naturalWidth
+			&& (character.x+character.width) > this.x - images.fenceImageVer.naturalWidth
+			&& (character.y + character.height/1.6) < this.y + images.fenceImageHor.naturalHeight 
 			&& (character.y + character.height) > this.y){
 			return 2;
 		}
 	} else if(this.type == 1){
-		if ((character.x) < this.x + fenceImageVer.naturalWidth
+		if ((character.x) < this.x + images.fenceImageVer.naturalWidth
 			&& (character.x+character.width) > this.x
 			&& (character.y + character.height/1.6) < this.y + this.length
 			&& (character.y + character.height) > this.y){
@@ -48,12 +48,12 @@ fence.prototype.collide = function(character) { //returns 0 for no collision, re
 };
 
 fence.prototype.collideFromSide = function(character) {
-	if (character.prevX > this.x + this.length + fenceImageVer.naturalWidth && (character.x) < this.x + this.length + fenceImageVer.naturalWidth
-		&& (character.y + character.height/1.6) < this.y + fenceImageHor.naturalHeight 
+	if (character.prevX > this.x + this.length + images.fenceImageVer.naturalWidth && (character.x) < this.x + this.length + images.fenceImageVer.naturalWidth
+		&& (character.y + character.height/1.6) < this.y + images.fenceImageHor.naturalHeight 
 			&& (character.y + character.height) > this.y){
 		return true;
-	}else if (character.prevX+character.width < this.x - fenceImageVer.naturalWidth && character.x+character.width > this.x - fenceImageVer.naturalWidth
-		&& (character.y + character.height/1.6) < this.y + fenceImageHor.naturalHeight 
+	}else if (character.prevX+character.width < this.x - images.fenceImageVer.naturalWidth && character.x+character.width > this.x - images.fenceImageVer.naturalWidth
+		&& (character.y + character.height/1.6) < this.y + images.fenceImageHor.naturalHeight 
 			&& (character.y + character.height) > this.y){
 		return true;
 	}
