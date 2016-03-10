@@ -167,6 +167,7 @@ var init = function (callback) {
 	load_character();
 	load_roads_fences();
 	load_trees();
+	canvasRdy = true;
 	if(callback!=undefined){
 		mainLoopRunning = true;
 		callback();

@@ -1,10 +1,12 @@
+var canvasRdy = false;
+
 function onReady(callback) {
     var intervalID = window.setInterval(checkReady, 100); //default is 1400
     function checkReady() {
-        if (document.getElementsByTagName('body')[0] !== undefined) {
+        if (canvasRdy) {
             window.clearInterval(intervalID);
             window.clearInterval(loadingMsgInt);
-            $('#loadingMessage').html("Loading done");
+            $('#loading p').html("Loading done");
             callback.call(this);
         }
     }
@@ -17,10 +19,10 @@ function show(id, value) {
 function loadMsg() {
     if (loadingDots==3){
         loadingDots=0;
-        $('#loadingMessage').html("Loading");
+        $('#loading p').html("Loading");
     }else{
         loadingDots++;
-        $('#loadingMessage').append(".");
+        $('#loading p').append(".");
     }
 }
 
