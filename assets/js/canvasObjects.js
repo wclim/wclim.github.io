@@ -1,22 +1,25 @@
-var ROADWIDTH = 300;
+var roadType = {
+	main: 0,
+	sideLeft: 1,
+	sideRight: 2
+}
 
-var fence = function (type, pos, x, y, length, parent) {
+var fence = function (type, x, y, length, parent) {
 	this.type = type; //0 for horizontal on left of main road, 1 for vertical, 2 for horizontal on right of main road
-	this.roadPosition = pos; //left right bottom and top, indicates the position of the road relative to fence
 	this.length = length;
 	this.x = x;
 	this.y = y;
 	this.parentRoad = parent;
 };
 
-var road = function (type, x, y, width, length) {
-	this.type = type; //0 for main road, 1 for left side road, 2 for right side road
-	this.length = length;
-	this.width = width;
-	this.x = x;
-	this.y = y;
-	this.x2 = this.x + width;
-	this.y2 = this.y + length;
+var road = function (data) {
+	this.type = data[0];
+	this.length = data[4];
+	this.width = data[3];
+	this.x = data[1];
+	this.y = data[2];
+	this.x2 = this.x + this.width;
+	this.y2 = this.y + this.length;
 };
 
 var tree = function (type, x, y){
@@ -81,3 +84,17 @@ road.prototype.isEquals = function(other) {
 	}
 	return false;
 };
+
+function compareRoads(a,b){
+	if (a.type < b.type){
+		return -1;
+	}else if (a.type > b.type){
+		return 1;
+	}
+	if (a.y < b.y){
+		return 1;
+	}else if (a.y > b.y){
+		return -1;
+	}
+	return 0;
+}

@@ -7,3 +7,6 @@ websiteStates = {
 var webSite = {
 	state: 2
 }
+
+//please put scripts in assets/js/ folder
+var canvasScripts = ["canvasObjects.js", "canvasData.js", "canvas.js"];
