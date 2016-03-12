@@ -34,6 +34,12 @@ var house = function(data){
 	this.x2 = this.x + data[2];
 	this.y2 = this.y + data[3];
 	this.tab = data[4];
+	this.banner = data[5];
+	this.doorClosed = true;
+	this.doorX = 26;
+	this.doorY = 122;
+	this.doorX2 = this.doorX + 35;
+	this.doorY2 = this.doorY + 35;
 }
 
 fence.prototype.collide = function(character) { //returns 0 for no collision, returns 1 for vertical fence collision, returns 2 for horizontal fence collision
@@ -70,6 +76,65 @@ fence.prototype.collideFromSide = function(character) {
 	}
 	return false;
 };
+
+house.prototype.collide = function(character){ //returns normal true/false collision 
+	if (character.x <= this.x2 && character.x+character.width >= this.x
+		&& (character.y + character.height/1.6) <= this.y2
+		&& (character.y + character.height) >= (this.y+this.y2)/2 ){
+		if(this.doorClosed){
+			return true;
+		}else{
+			if (character.x <=  this.x + this.doorX && character.x + character.width >= this.x
+				&& character.y + character.height/1.6 < this.y2 && character.y + character.height > this.y){
+				return true;
+			}else if  (character.x <=  this.x2 && character.x + character.width >= this.x + this.doorX2
+				&& character.y + character.height/1.6 < this.y2 && character.y + character.height > this.y){
+				return true;
+			}else if  (character.y + character.height/1.6 <= (this.y+this.y2)/2 + 30){
+				this.openTab();
+				return true;
+			}
+		}
+		
+	}
+	return false;
+}
+
+house.prototype.crash = function(character){ //returns normal true/false collision
+	if (character.x < this.x2 && character.x+character.width > this.x
+		&& (character.y + character.height/1.6) < this.y2
+		&& (character.y + character.height) > (this.y+this.y2)/2 ){
+		return true;
+	}
+	return false;
+}
+
+house.prototype.openTab = function(){
+	openLink(this.tab);
+}
+
+house.prototype.moveCharacterOver = function(character){
+	character.direction = characterDirection.S;
+	character.x = this.x + (this.doorX + this.doorX2)/2 - character.width/2;
+	character.y = (this.y+this.y2)/2 + 35 - character.height/1.6;
+}
+
+house.prototype.atDoor = function(character){ 
+	var detectionRadius = 30;
+	if (character.x+character.width < this.x + this.doorX2 + detectionRadius && character.x > this.x + this.doorX - detectionRadius
+		&& character.y < this.y2 + detectionRadius && character.y + character.height > (this.y+this.y2)/2){
+		return true;
+	}
+	return false;
+}
+
+house.prototype.openDoor = function(){ 
+	this.doorClosed = false;
+}
+
+house.prototype.closeDoor = function(){ 
+	this.doorClosed = true;
+}
 
 road.prototype.isLastOne = function() { 
 	for (var i=roads.length-1; i>0; i--){

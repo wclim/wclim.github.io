@@ -1,6 +1,7 @@
 var LEFTMARGIN = 5;
 var RIGHTMARGIN = 10;
-var DEFAULTSPEED = 700;
+var DEFAULTSPEED = 300;
+var CAMERASPEED = 600;
 var ROADWIDTH = 300;
 var TITLE = "Lim Wei Cheng";
 var SUBTITLE = "Just another rather average being";
@@ -86,7 +87,10 @@ var me = {
 	x: mapWidth/2,
 	y: mapHeight-100,
 	prevX:0,
-	prevY:0
+	prevY:0,
+	autoWalk: false,
+	autoWalkX: 0,
+	autoWalkY: 0
 };
 
 window.onresize = function(event) {
@@ -161,10 +165,10 @@ function load_roads_fences(){
 
 function load_houses(){
 	houses = [];
-	var houseDetails = [[40,mapHeight-ROADWIDTH - 150 - 100, images.houseroof.naturalWidth, images.houseroof.naturalHeight, "About Me"],
-					[40 + images.houseroof.naturalWidth + 20,mapHeight-ROADWIDTH - 150 - 100, images.houseroof.naturalWidth, images.houseroof.naturalHeight, "CV"],
-					[mapWidth-images.houseroof.naturalWidth-40-images.houseroof.naturalWidth - 20, mapHeight-ROADWIDTH-300-100, images.houseroof.naturalWidth, images.houseroof.naturalHeight, "Skills"],
-					[mapWidth-images.houseroof.naturalWidth-40, mapHeight-ROADWIDTH-300-100, images.houseroof.naturalWidth, images.houseroof.naturalHeight, "Contact Me"]];
+	var houseDetails = [[20,mapHeight-ROADWIDTH - 150 - 100, images.houseroof.naturalWidth, images.houseroof.naturalHeight, "aboutme", "About Me"],
+					[20 + images.houseroof.naturalWidth + 40,mapHeight-ROADWIDTH - 150 - 100, images.houseroof.naturalWidth, images.houseroof.naturalHeight, 'cv', "CV/Resume"],
+					[mapWidth-images.houseroof.naturalWidth-20-images.houseroof.naturalWidth - 40, mapHeight-ROADWIDTH-300-100, images.houseroof.naturalWidth, images.houseroof.naturalHeight, 'skills', "Skills"],
+					[mapWidth-images.houseroof.naturalWidth-20, mapHeight-ROADWIDTH-300-100, images.houseroof.naturalWidth, images.houseroof.naturalHeight, 'contact', "Contact Me"]];
 
 	for (var i in houseDetails){
 		houses.push(new house(houseDetails[i]));
@@ -227,6 +231,12 @@ var init = function (callback) {
 	load_roads_fences();
 	load_houses();
 	load_trees();
+	for (var i in houses){
+		if (houses[i].crash(me)){
+			me.x = mapWidth/2;
+			me.y = mapHeight-100;
+		}
+	}
 	canvasRdy = true;
 	if(callback!=undefined){
 		mainLoopRunning = true;
@@ -238,15 +248,47 @@ var keysDown = {};
 
 function keyDownListener(e) {keysDown[e.keyCode] = true;}
 function keyUpListener(e) {delete keysDown[e.keyCode];}
-addEventListener("keydown", keyDownListener, false);
-addEventListener("keyup", keyUpListener, false);
+enableMouse();
 $(window).blur(function() { //to prevent abuse of walking through fences
 	keysDown = {};
 });
 
+function enableMouse(){
+	addEventListener("keydown", keyDownListener, false);
+	addEventListener("keyup", keyUpListener, false);
+}
+
+function disableMouse(){
+	removeEventListener("keydown", keyDownListener, false);
+	removeEventListener("keyup", keyUpListener, false);
+	keysDown = {};
+}
+
 var update = function (modifier) {
 	me.prevX = me.x;
 	me.prevY = me.y;
+	if (me.autoWalk){
+		keysDown = {};
+		if (me.x > me.autoWalkX + 5){
+			keysDown[37] = true;
+		}else if (me.x < me.autoWalkX - 5){
+			keysDown[39] = true;
+		}else {
+			me.x = me.autoWalkX;
+		}
+		if (me.y > me.autoWalkY + 5){
+			keysDown[38] = true;
+		}else if (me.y < me.autoWalkY - 5){
+			keysDown[40] = true;
+		}else {
+			me.y = me.autoWalkY;
+		}
+		if (me.x == me.autoWalkX && me.y == me.autoWalkY){
+			me.autoWalk = false;
+			enableMouse();
+			keysDown = {};
+		}
+	}
 	if (!((38 in keysDown && 40 in keysDown) || (37 in keysDown && 39 in keysDown))){
 		if (38 in keysDown) { // Player holding up
 			me.direction = characterDirection.N;
@@ -286,13 +328,13 @@ var update = function (modifier) {
 		} else{
 			me.walkAnimation=0;
 		}
-
+		checkDoors();
 		checkCollision();
 		if(!onRoads(me)){
 			me.x = me.prevX;
 			me.y = me.prevY;
 		}
-	    setCameraViewPort();
+	    setCameraViewPort(modifier);
 	}
 };
 
@@ -341,10 +383,34 @@ function checkCollision(){
 	    	}
 	    }
     }
+    if (houses != null){
+    	for (var i=0, collisionIndex; i<houses.length; i++){
+	    	if (houses[i].collide(me)){
+	    		me.x = me.prevX;
+	    		me.y = me.prevY;
+	    		break;
+	    	}
+	    }
+    }   
+}
+
+function checkDoors(){
+    if (houses != null){
+    	for (var i=0; i<houses.length; i++){
+    		if(houses[i].atDoor(me)){
+    			houses[i].openDoor();
+    		}else{
+    			houses[i].closeDoor();
+    		}
+	    }
+    }
     
 }
 
-function setCameraViewPort(){
+var currCamX = 0;
+var currCamY = 0;
+var panning = false;
+function setCameraViewPort(modifier){
     ctx.setTransform(1,0,0,1,0,0);
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	var camX = -me.x + canvas.width/2;
@@ -360,7 +426,28 @@ function setCameraViewPort(){
     	camY = canvas.height - mapHeight;
     }
 
-    ctx.translate( camX, camY );
+    if (panning){
+    	if (currCamX < camX - 9){
+	    	currCamX += CAMERASPEED * modifier;
+	    }else if (currCamX > camX + 9){
+	    	currCamX -= CAMERASPEED * modifier;
+	    }else{
+	    	currCamX = camX;
+	    }
+	    if (currCamY < camY - 9){
+	    	currCamY += CAMERASPEED * modifier;
+	    }else if (currCamY > camY + 9){
+	    	currCamY -= CAMERASPEED * modifier;
+	    }else{
+	    	currCamY = camY;
+	    }
+	    ctx.translate( currCamX, currCamY );
+    }else {
+    	currCamX = camX;
+    	currCamY = camY;
+    	ctx.translate( camX, camY );
+    }
+	    
 }
 
 var render = function () {
@@ -443,15 +530,28 @@ var drawTextOnGrass = function(){
 	ctx.fillText("Instructions", (mapWidth/2)+(ROADWIDTH*0.75+39), mapHeight-220);
 	ctx.fillStyle = "rgba(255,255,255,0.5)";
 	ctx.fillText("Instructions", (mapWidth/2)+(ROADWIDTH*0.75+40), mapHeight-221);
-	ctx.fillStyle = "rgba(0,0,0,1)";
+	ctx.fillStyle = "rgba(96,96,96,1)";
 	ctx.fillText("Instructions", (mapWidth/2)+(ROADWIDTH*0.75+40), mapHeight-222);
 	ctx.restore();
+
 	ctx.fillText("Use arrows keys to navigate", (mapWidth/2)+(ROADWIDTH*0.75+40+3.3*canvas.width/64), mapHeight-222 + 2*canvas.width/56);
-	ctx.fillText("Be nice to the environment", (mapWidth/2)+(ROADWIDTH*0.75+40+3.3*canvas.width/64), mapHeight-222 + 2*canvas.width/56 + 2*canvas.width/64);
+	ctx.save();
 	ctx.font = canvas.width/64 + "px WebSymbols";
 	ctx.fillText("(;)", (mapWidth/2)+(ROADWIDTH*0.75+40), mapHeight-222 + 2*canvas.width/56);
 	ctx.fillText(":", (mapWidth/2)+(ROADWIDTH*0.75+40+canvas.width/64), mapHeight-223 + 2*canvas.width/56-canvas.width/64);
-	ctx.fillText("#", (mapWidth/2)+(ROADWIDTH*0.75+40+canvas.width/64), mapHeight-222 + 2*canvas.width/56  + 2*canvas.width/64);
+	ctx.restore();
+
+	ctx.fillText("Enter houses to view different tabs", (mapWidth/2)+(ROADWIDTH*0.75+40+3.3*canvas.width/64), mapHeight-222 + 2*canvas.width/56 + 1.3*canvas.width/64);
+	ctx.save();
+	ctx.font = canvas.width/64 + "px WebSymbols";
+	ctx.fillText("n", (mapWidth/2)+(ROADWIDTH*0.75+40+canvas.width/64), mapHeight-222 + 2*canvas.width/56  + 1.3*canvas.width/64);
+	ctx.restore();
+
+	ctx.fillText("Press Esc to close tabs", (mapWidth/2)+(ROADWIDTH*0.75+40+3.3*canvas.width/64), mapHeight-222 + 2*canvas.width/56 + 2.6*canvas.width/64);
+	ctx.save();
+	ctx.font = canvas.width/64 + "px WebSymbols";
+	ctx.fillText("h", (mapWidth/2)+(ROADWIDTH*0.75+40+canvas.width/64), mapHeight-222 + 2*canvas.width/56  + 2.6*canvas.width/64);
+	ctx.restore();
 }
 
 var drawTextOnRoads = function(){
@@ -478,7 +578,9 @@ var drawTrees = function(){
 var drawHouseFloor = function(){
 	for (var i=0; i<houses.length; i++){
 		ctx.drawImage(images.housefloor, houses[i].x, houses[i].y+61);
-		ctx.drawImage(images.housedoor, houses[i].x+26, houses[i].y+122);
+		if (houses[i].doorClosed){
+			ctx.drawImage(images.housedoor, houses[i].x+houses[i].doorX, houses[i].y+houses[i].doorY);
+		}
 	}
 }
 
@@ -488,13 +590,20 @@ var drawHouseRoof = function(){
 		ctx.save();
 		ctx.font = "25px CodersCrux";
 		ctx.fillStyle = "rgba(0,0,0,0.3)";
-		ctx.fillText(houses[i].tab, (houses[i].x+houses[i].x2)/2-5.5*houses[i].tab.length+1, houses[i].y+100+2);
+		ctx.fillText(houses[i].banner, (houses[i].x+houses[i].x2)/2-5.3*houses[i].banner.length+1, houses[i].y+100+2);
 		ctx.fillStyle = "rgba(255,255,255,1)";
-		ctx.fillText(houses[i].tab, (houses[i].x+houses[i].x2)/2-5.5*houses[i].tab.length, houses[i].y+98);
+		ctx.fillText(houses[i].banner, (houses[i].x+houses[i].x2)/2-5.3*houses[i].banner.length, houses[i].y+98);
 		ctx.fillStyle = "rgba(96,96,96,1)";
-		ctx.fillText(houses[i].tab, (houses[i].x+houses[i].x2)/2-5.5*houses[i].tab.length, houses[i].y+100);
+		ctx.fillText(houses[i].banner, (houses[i].x+houses[i].x2)/2-5.3*houses[i].banner.length, houses[i].y+100);
 		ctx.restore();
 	}
+}
+
+var walkTo = function(character, x, y) {
+	disableMouse();
+	character.autoWalk = true;
+	character.autoWalkX = x;
+	character.autoWalkY = y;
 }
 
 var drawCharacter = function(){
