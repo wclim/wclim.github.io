@@ -47,16 +47,16 @@ fence.prototype.collide = function(character) { //returns 0 for no collision, re
 		if (this.collideFromSide(character)){
 			return 1;
 		}
-		if ((character.x) < this.x + this.length + images.fenceImageVer.naturalWidth
-			&& (character.x+character.width) > this.x - images.fenceImageVer.naturalWidth
-			&& (character.y + character.height/1.6) < this.y + images.fenceImageHor.naturalHeight 
-			&& (character.y + character.height) > this.y){
+		if ((character.x) <= this.x + this.length + images.fenceImageVer.naturalWidth
+			&& (character.x+character.width) >= this.x - images.fenceImageVer.naturalWidth
+			&& (character.y + character.height/1.6) <= this.y + images.fenceImageHor.naturalHeight + 2
+			&& (character.y + character.height) >= this.y){
 			return 2;
 		}
 	} else if(this.type == 1){
-		if ((character.x) < this.x + images.fenceImageVer.naturalWidth
-			&& (character.x+character.width) > this.x
-			&& (character.y + character.height/1.6) < this.y + this.length
+		if ((character.x) <= this.x + images.fenceImageVer.naturalWidth
+			&& (character.x+character.width) >= this.x
+			&& (character.y + character.height/1.6) < this.y + this.length  + 2
 			&& (character.y + character.height) > this.y){
 			return 1;
 		}

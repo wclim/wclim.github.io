@@ -1,6 +1,7 @@
 function escListener(e) {if (e.keyCode == 27){closeLink();}}
 
 function openLink(link){
+	if (me.autoWalk){keysDown={};me.autoWalk=false;}
 	$('#dark').fadeIn("200", function(){
 		$('#tab').fadeIn("500");
 	});
