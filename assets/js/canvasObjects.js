@@ -28,6 +28,10 @@ var tree = function (type, x, y){
 	this.y = y;
 }
 
+var house = function(){
+	
+}
+
 fence.prototype.collide = function(character) { //returns 0 for no collision, returns 1 for vertical fence collision, returns 2 for horizontal fence collision
 	if (this.type == 0 || this.type == 2){
 		if (this.collideFromSide(character)){

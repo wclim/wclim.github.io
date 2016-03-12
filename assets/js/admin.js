@@ -5,7 +5,7 @@ websiteStates = {
 }
 
 var webSite = {
-	state: 2
+	state: 1
 }
 
 //please put scripts in assets/js/ folder
