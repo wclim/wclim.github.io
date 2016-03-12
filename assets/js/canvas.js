@@ -593,11 +593,11 @@ var drawHouseRoof = function(){
 		ctx.save();
 		ctx.font = "25px CodersCrux";
 		ctx.fillStyle = "rgba(0,0,0,0.3)";
-		ctx.fillText(houses[i].banner, (houses[i].x+houses[i].x2)/2-5.3*houses[i].banner.length+1, houses[i].y+100+2);
+		ctx.fillText(houses[i].banner, (houses[i].x+houses[i].x2)/2-5*houses[i].banner.length+1, houses[i].y+100+2);
 		ctx.fillStyle = "rgba(255,255,255,1)";
-		ctx.fillText(houses[i].banner, (houses[i].x+houses[i].x2)/2-5.3*houses[i].banner.length, houses[i].y+98);
+		ctx.fillText(houses[i].banner, (houses[i].x+houses[i].x2)/2-5*houses[i].banner.length, houses[i].y+98);
 		ctx.fillStyle = "rgba(96,96,96,1)";
-		ctx.fillText(houses[i].banner, (houses[i].x+houses[i].x2)/2-5.3*houses[i].banner.length, houses[i].y+100);
+		ctx.fillText(houses[i].banner, (houses[i].x+houses[i].x2)/2-5*houses[i].banner.length, houses[i].y+100);
 		ctx.restore();
 	}
 }
