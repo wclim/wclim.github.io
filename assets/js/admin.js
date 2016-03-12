@@ -9,4 +9,4 @@ var webSite = {
 }
 
 //please put scripts in assets/js/ folder
-var canvasScripts = ["canvasObjects.js", "canvasData.js", "canvas.js"];
+var canvasScripts = ["canvasObjects.js", "canvas.js"];

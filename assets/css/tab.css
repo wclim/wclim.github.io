@@ -32,6 +32,13 @@ h1{
 h2{
 	font-weight: 600;
 	font-size:30px;
+	padding-top:30px;
+}
+
+h3 {
+	font-size:25px;
+	font-weight: 100;
+	text-decoration: underline;
 }
 
 p, li {
