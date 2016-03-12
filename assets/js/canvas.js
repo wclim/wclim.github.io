@@ -20,6 +20,32 @@ var mapWidth = canvas.width*1.1;
 var mapHeight = Math.max(2500, canvas.height);
 var ctx = canvas.getContext('2d');
 
+
+function getMousePos(canvas, evt) {
+	var rect = canvas.getBoundingClientRect();
+	var camX = -me.x + canvas.width/2;
+    var camY = -me.y + canvas.height/2;
+    if (me.x <= canvas.width/2){
+    	camX = 0;
+    } else if (me.x >= mapWidth - canvas.width/2){
+    	camX = canvas.width - mapWidth;
+    }
+    if (me.y <= canvas.height/2){
+    	camY = 0;
+    } else if (me.y >= mapHeight - canvas.height/2){
+    	camY = canvas.height - mapHeight;
+    }
+	return {
+		x: (evt.clientX - camX) - rect.left,
+		y: (evt.clientY - camY) - rect.top
+	};
+}
+
+canvas.addEventListener('mouseup', function(evt) {
+	var mousePos = getMousePos(canvas, evt);
+	walkTo(me, mousePos.x, mousePos.y);
+}, false);
+
 var images = {};
 var imageSources = {
 	//Terrain images
@@ -246,7 +272,7 @@ var init = function (callback) {
 
 var keysDown = {};
 
-function keyDownListener(e) {keysDown[e.keyCode] = true;}
+function keyDownListener(e) {if (me.autoWalk){keysDown={};me.autoWalk=false;}keysDown[e.keyCode] = true;}
 function keyUpListener(e) {delete keysDown[e.keyCode];}
 enableMouse();
 $(window).blur(function() { //to prevent abuse of walking through fences
@@ -285,7 +311,6 @@ var update = function (modifier) {
 		}
 		if (me.x == me.autoWalkX && me.y == me.autoWalkY){
 			me.autoWalk = false;
-			enableMouse();
 			keysDown = {};
 		}
 	}
@@ -603,7 +628,6 @@ var drawHouseRoof = function(){
 }
 
 var walkTo = function(character, x, y) {
-	disableMouse();
 	character.autoWalk = true;
 	character.autoWalkX = x;
 	character.autoWalkY = y;
