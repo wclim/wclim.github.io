@@ -10,24 +10,31 @@
 	</head>
 	<body>
 		<div id="loading">
-			<div id="loadingMessage">
-				Loading
-			</div>
+			<p>Loading</p>
+		</div>
+		<div id="dark">
+			<iframe id="tab"></iframe>
+		</div>
+		<div id="smallScreen">
+			<p>Sorry, this website is only supported on screens of width <b>672</b> pixels and above.</p>
 		</div>
 		<div id="mainContent">
-			<!-- Sidebar -->
-
+			<!-- Menubar -->
+			<nav>
+	            <ul class="nav">
+	                <li><a href="javascript:void(0);" onclick="openLink('aboutme')">About Me</a></li>
+	                <li><a href="javascript:void(0);" onclick="openLink('cv')">CV</a></li>
+	                <li><a href="javascript:void(0);" onclick="openLink('skills')">Skills</a></li>
+	                <li><a href="javascript:void(0);" onclick="openLink('contact')">Contact</a></li>
+	            </ul>
+	        </nav>
 			<!-- Wrapper -->
 				<div id="wrapper">
+				<canvas id="myCanvas"><div id="notsupported"><p>Your browser does not support HTML5 canvas.</p></div></canvas>
 				</div>
-
 			<!-- Footer -->
 				<footer id="footer">
-					<div>
-						<ul>
-							<li>&copy; By weicheng.</li>
-						</ul>
-					</div>
+					&copy; By weicheng.
 				</footer>
 		</div>
 		<!-- Scripts -->
@@ -38,5 +45,6 @@
 			<script src="assets/js/admin.js"></script>
 			<script src="assets/js/loader.js"></script>
 			<script src="assets/js/webSiteState.js"></script>
+			<script src="assets/js/tabs.js"></script>
 	</body>
 </html>

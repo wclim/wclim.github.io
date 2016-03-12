@@ -1,21 +1,33 @@
 @charset "UTF-8";
 
+*{
+	margin:0;
+	padding:0;
+	/* Disable highlighting */
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none;   /* Chrome/Safari/Opera */
+	-khtml-user-select: none;    /* Konqueror */
+	-moz-user-select: none;      /* Firefox */
+	-ms-user-select: none;       /* IE/Edge */
+	user-select: none; 
+}
+
 html, body{
 	font-family: "CodersCrux";
 	font-weight: normal;
 	width:100%;
 	height:100%;
 	color: black;
-	margin: 0 0 0 0;
+	margin: 0;
+	overflow: hidden;
 }
-
-
 
 .underConstruction, .offline {
 	background:   #F7DB4F !important;
 }
 
-.constructionMessage, #loadingMessage {
+.underConstruction p, .offline p{
+	margin: 10px;
 	font-size: 35pt;
 	text-align: center;
 	position: relative;
@@ -24,29 +36,256 @@ html, body{
 }
 
 #mainContent {
-    display: none;
+    display: block;
 }
 
-#loading.fade-out{
-   	opacity: 0;
+#smallScreen{
+	display:none;
+	position:fixed;
+	left:0;
+	top:0;
+	width: 100vw;
+	height:100vh;
+	background:   #F7DB4F !important;
+}
+
+#smallScreen p {
+	margin: 10px;
+	font-size: 35pt;
+	text-align: center;
+	position: relative;
+	top: 50%;
+  	transform: translateY(-50%);
+}
+
+#wrapper, #mainContent, #myCanvas {
+	height:100%;
+	margin:0;
+}
+
+#footer {
+	position: absolute;
+	bottom:5px;
+	right: 5px;
+	z-index: 999;
+}
+
+/*Disable for small screens --------------------------------------------------------*/
+@media only screen and (max-width:671px){
+	#mainContent {
+		display:none;
+	}
+
+	#smallScreen {
+		display: block;
+	}
+}
+
+/*Tab styles -----------------------------------------------------------------------*/
+#dark {
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+#tab {
+	width: 78%;
+	height: 86%;
+	display:none;
+	position:fixed;
+	top: 7%;
+	left: 11%;
+	z-index: 10001;
+	border-radius:15px;
+	background-color: rgb(255, 255, 255);
+	border: 0;
+	padding-left: 5px;
+	padding-top: 5px;
+	background-image: url("../images/concrete_wall.png");
+	background-repeat: repeat;
+}
+
+/*Loader and stuff styles ----------------------------------------------------------*/
+
+#loading p {
+	font-size: 35pt;
+	text-align: center;
+	position: relative;
+	top: 50%;
+  	transform: translateY(-50%);
 }
 
 #loading {
     display: block;
     position: absolute;
+    margin: 0;
     top: 0;
     left: 0;
-    z-index: 100;
+    z-index: 2000;
     width: 100vw;
     height: 100vh;
     background-color: #E5FCC2;
-    -webkit-transition: opacity 1.5s ease-in-out;
-    -moz-transition: opacity 1.5s ease-in-out;
-    -ms-transition: opacity 1.5s ease-in-out;
-    -o-transition: opacity 1.5s ease-in-out;
     opacity: 1;
 }
 
+#notsupported {
+	position: relative;
+	width: 100%;
+    height: 100%;
+	z-index: 2001;
+	background-color: #E5FCC2;
+	text-align: center;
+}
+
+#notsupported p{
+	font-size:50px;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+/*Menu Style ----------------------------------------------------------*/
+.nav{
+	/* Affects the UL element */
+	overflow: hidden;
+	display: inline-block;
+	position: fixed;
+	left: 50%;
+	transform: translateX(-50%);
+	top: 15px;
+	z-index: 999;
+	border:groove;
+	border-radius: 15px;
+}
+
+.nav li{
+	/* Specifying a fallback color and we define CSS3 gradients for the major browsers: */
+	
+	background-color: #f0f0f0;
+	background-image: -webkit-gradient(linear,left top, left bottom,from(#fefefe), color-stop(0.5,#f0f0f0), color-stop(0.51, #e6e6e6));
+	background-image: -moz-linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
+	background-image: -o-linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
+	background-image: -ms-linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
+	background-image: linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
+	
+	border-right: 1px solid rgba(9, 9, 9, 0.125);
+	
+	/* Adding a 1px inset highlight for a more polished efect: */
+	
+	box-shadow: 1px -1px 0 rgba(255, 255, 255, 0.6) inset;
+	-moz-box-shadow: 1px -1px 0 rgba(255, 255, 255, 0.6) inset;
+	-webkit-box-shadow: 1px -1px 0 rgba(255, 255, 255, 0.6) inset;
+	
+	position:relative;
+	
+	float: left;
+	list-style: none;
+}
+
+.nav li:after{
+
+	/* This creates a pseudo element inslide each LI */	
+	
+	content:'.';
+	text-indent:-9999px;
+	overflow:hidden;
+	position:absolute;
+	width:100%;
+	height:100%;
+	top:0;
+	left:0;
+	z-index:1;
+	opacity:0;
+	
+	/* Gradients! */
+	
+	background-image:-webkit-gradient(linear, left top, right top, from(rgba(168,168,168,0.5)),color-stop(0.5,rgba(168,168,168,0)), to(rgba(168,168,168,0.5)));
+	background-image:-moz-linear-gradient(left, rgba(168,168,168,0.5), rgba(168,168,168,0) 50%, rgba(168,168,168,0.5));
+	background-image:-o-linear-gradient(left, rgba(168,168,168,0.5), rgba(168,168,168,0) 50%, rgba(168,168,168,0.5));
+	background-image:-ms-linear-gradient(left, rgba(168,168,168,0.5), rgba(168,168,168,0) 50%, rgba(168,168,168,0.5));
+	background-image:linear-gradient(left, rgba(168,168,168,0.5), rgba(168,168,168,0) 50%, rgba(168,168,168,0.5));
+	
+	/* Creating borders with box-shadow. Useful, as they don't affect the size of the element. */
+	
+	box-shadow:-1px 0 0 #a3a3a3,-2px 0 0 #fff,1px 0 0 #a3a3a3,2px 0 0 #fff;
+	-moz-box-shadow:-1px 0 0 #a3a3a3,-2px 0 0 #fff,1px 0 0 #a3a3a3,2px 0 0 #fff;
+	-webkit-box-shadow:-1px 0 0 #a3a3a3,-2px 0 0 #fff,1px 0 0 #a3a3a3,2px 0 0 #fff;
+	
+	/* This will create a smooth transition for the opacity property */
+	
+	-moz-transition:0.25s all;
+	-webkit-transition:0.25s all;
+	-o-transition:0.25s all;
+	transition:0.25s all;
+}
+
+/* Treating the first LI and li:after elements separately */
+
+.nav li:first-child{
+	border-radius: 4px 0 0 4px;
+}
+
+.nav li:first-child:after,
+.nav li.selected:first-child:after{
+	box-shadow:1px 0 0 #a3a3a3,2px 0 0 #fff;
+	-moz-box-shadow:1px 0 0 #a3a3a3,2px 0 0 #fff;
+	-webkit-box-shadow:1px 0 0 #a3a3a3,2px 0 0 #fff;
+	
+	border-radius:4px 0 0 4px;
+}
+
+.nav li:last-child{
+	border-radius: 0 4px 4px 0;
+}
+
+/* Treating the last LI and li:after elements separately */
+
+.nav li:last-child:after,
+.nav li.selected:last-child:after{
+	box-shadow:-1px 0 0 #a3a3a3,-2px 0 0 #fff;
+	-moz-box-shadow:-1px 0 0 #a3a3a3,-2px 0 0 #fff;
+	-webkit-box-shadow:-1px 0 0 #a3a3a3,-2px 0 0 #fff;
+	
+	border-radius:0 4px 4px 0;
+}
+
+.nav li:hover:after,
+.nav li.selected:after,
+.nav li:target:after{
+	/* This property triggers the CSS3 transition */
+	opacity:1;
+}
+
+.nav:hover li.selected:after,
+.nav:hover li:target:after{
+	/* Hides the targeted li when we are hovering on the UL */
+	opacity:0;
+}
+
+.nav li.selected:hover:after,
+.nav li:target:hover:after{
+	opacity:1 !important;
+}
+
+/* Styling the anchor elements */
+
+.nav li a{
+	color: #5d5d5d;
+	display: inline-block;
+	font: 25px CodersCrux;
+	padding: 3px 12px 7px;
+	position: relative;
+	z-index:2;
+	text-decoration:none !important;
+	white-space:nowrap;
+}
+
+/*Fonts ------------------------------------------------------------*/
 
 @font-face {
     font-family: "CodersCrux";
@@ -60,6 +299,14 @@ html, body{
 	font-family: 'PressStart';
 	src: url('../../assets/fonts/PressStart2P.eot');
 	src: local('☺'), url('../../assets/fonts/PressStart2P.woff') format('woff'), url('../../assets/fonts/PressStart2P.ttf') format('truetype'), url('../../assets/fonts/PressStart2P.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'WebSymbols';
+	src: url('../../assets/fonts/WebSymbols-Regular.eot');
+	src: local('☺'), url('../../assets/fonts/WebSymbols-Regular.woff') format('woff'), url('../../assets/fonts/WebSymbols-Regular.ttf') format('truetype'), url('../../assets/fonts/WebSymbols-Regular.svg') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
