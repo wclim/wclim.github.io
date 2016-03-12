@@ -36,8 +36,8 @@ function getMousePos(canvas, evt) {
     	camY = canvas.height - mapHeight;
     }
 	return {
-		x: (evt.clientX - camX) - rect.left,
-		y: (evt.clientY - camY) - rect.top
+		x: (evt.clientX - camX) - rect.left - me.width/2,
+		y: (evt.clientY - camY) - rect.top - me.height
 	};
 }
 
