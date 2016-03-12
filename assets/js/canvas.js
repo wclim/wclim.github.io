@@ -9,6 +9,7 @@ var fences = [];
 var roads = [];
 var trees = [];
 var treeCoordinates = [];
+var houses = [];
 
 var mainLoopRunning = false;
 var canvas = document.getElementById('myCanvas');
@@ -29,6 +30,11 @@ var imageSources = {
 	treeImage2: 		"assets/images/sprites/terrain/tree2.png",
 	treeImage3: 		"assets/images/sprites/terrain/tree3.png",
 	bigTreeImage: 		"assets/images/sprites/terrain/bigtree.png",
+
+	//House
+	housedoor: 			"assets/images/sprites/house/door.png",
+	housefloor:			"assets/images/sprites/house/housefloor.png",
+	houseroof: 			"assets/images/sprites/house/houseroof.png",
 
 	//Character Images
 	characterS: 		"assets/images/sprites/characters/meS.png",
@@ -153,6 +159,18 @@ function load_roads_fences(){
 	}
 }
 
+function load_houses(){
+	houses = [];
+	var houseDetails = [[40,mapHeight-ROADWIDTH - 150 - 100, images.houseroof.naturalWidth, images.houseroof.naturalHeight, "About Me"],
+					[40 + images.houseroof.naturalWidth + 20,mapHeight-ROADWIDTH - 150 - 100, images.houseroof.naturalWidth, images.houseroof.naturalHeight, "CV"],
+					[mapWidth-images.houseroof.naturalWidth-40-images.houseroof.naturalWidth - 20, mapHeight-ROADWIDTH-300-100, images.houseroof.naturalWidth, images.houseroof.naturalHeight, "Skills"],
+					[mapWidth-images.houseroof.naturalWidth-40, mapHeight-ROADWIDTH-300-100, images.houseroof.naturalWidth, images.houseroof.naturalHeight, "Contact Me"]];
+
+	for (var i in houseDetails){
+		houses.push(new house(houseDetails[i]));
+	}
+}
+
 function load_trees(){
 	var randominzer=0;
 	trees = [];
@@ -207,6 +225,7 @@ var init = function (callback) {
     canvas.height = window.innerHeight;
 	load_character();
 	load_roads_fences();
+	load_houses();
 	load_trees();
 	canvasRdy = true;
 	if(callback!=undefined){
@@ -349,8 +368,10 @@ var render = function () {
 	drawTextOnGrass();
 	drawRoads();
 	drawTextOnRoads();
+	drawHouseFloor();
 	drawCharacter();
 	drawTrees();
+	drawHouseRoof();
 };
 
 var drawTerrain = function(){
@@ -414,7 +435,23 @@ var drawTextOnGrass = function(){
 	ctx.fillText(TITLE,mapWidth/2-canvas.width/2+30,mapHeight-83);	
 	ctx.font = canvas.width/64 + "px CodersCrux";
 	ctx.fillStyle = "rgba(0,0,0,0.6)";
-	ctx.fillText(SUBTITLE, mapWidth/2-canvas.width/2+35, mapHeight-50);
+	ctx.fillText(SUBTITLE, mapWidth/2-canvas.width/2+33, mapHeight-83+ canvas.width/64);
+
+	ctx.save();
+	ctx.font = canvas.width/56 + "px CodersCrux";
+	ctx.fillStyle = "rgba(0,0,0,0.3)";
+	ctx.fillText("Instructions", (mapWidth/2)+(ROADWIDTH*0.75+39), mapHeight-220);
+	ctx.fillStyle = "rgba(255,255,255,0.5)";
+	ctx.fillText("Instructions", (mapWidth/2)+(ROADWIDTH*0.75+40), mapHeight-221);
+	ctx.fillStyle = "rgba(0,0,0,1)";
+	ctx.fillText("Instructions", (mapWidth/2)+(ROADWIDTH*0.75+40), mapHeight-222);
+	ctx.restore();
+	ctx.fillText("Use arrows keys to navigate", (mapWidth/2)+(ROADWIDTH*0.75+40+3.3*canvas.width/64), mapHeight-222 + 2*canvas.width/56);
+	ctx.fillText("Be nice to the environment", (mapWidth/2)+(ROADWIDTH*0.75+40+3.3*canvas.width/64), mapHeight-222 + 2*canvas.width/56 + 2*canvas.width/64);
+	ctx.font = canvas.width/64 + "px WebSymbols";
+	ctx.fillText("(;)", (mapWidth/2)+(ROADWIDTH*0.75+40), mapHeight-222 + 2*canvas.width/56);
+	ctx.fillText(":", (mapWidth/2)+(ROADWIDTH*0.75+40+canvas.width/64), mapHeight-223 + 2*canvas.width/56-canvas.width/64);
+	ctx.fillText("#", (mapWidth/2)+(ROADWIDTH*0.75+40+canvas.width/64), mapHeight-222 + 2*canvas.width/56  + 2*canvas.width/64);
 }
 
 var drawTextOnRoads = function(){
@@ -435,6 +472,28 @@ var drawTrees = function(){
 	}
 	for (var i=0; i<trees.length; i++){
 		ctx.drawImage(eval("images.treeImage" + trees[i].type), trees[i].x, trees[i].y);
+	}
+}
+
+var drawHouseFloor = function(){
+	for (var i=0; i<houses.length; i++){
+		ctx.drawImage(images.housefloor, houses[i].x, houses[i].y+61);
+		ctx.drawImage(images.housedoor, houses[i].x+26, houses[i].y+122);
+	}
+}
+
+var drawHouseRoof = function(){
+	for (var i=0; i<roads.length; i++){
+		ctx.drawImage(images.houseroof, houses[i].x, houses[i].y);
+		ctx.save();
+		ctx.font = "25px CodersCrux";
+		ctx.fillStyle = "rgba(0,0,0,0.3)";
+		ctx.fillText(houses[i].tab, (houses[i].x+houses[i].x2)/2-5.5*houses[i].tab.length+1, houses[i].y+100+2);
+		ctx.fillStyle = "rgba(255,255,255,1)";
+		ctx.fillText(houses[i].tab, (houses[i].x+houses[i].x2)/2-5.5*houses[i].tab.length, houses[i].y+98);
+		ctx.fillStyle = "rgba(96,96,96,1)";
+		ctx.fillText(houses[i].tab, (houses[i].x+houses[i].x2)/2-5.5*houses[i].tab.length, houses[i].y+100);
+		ctx.restore();
 	}
 }
 
