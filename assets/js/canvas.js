@@ -385,8 +385,11 @@ function checkCollision(){
     }
     if (houses != null){
     	for (var i=0, collisionIndex; i<houses.length; i++){
-	    	if (houses[i].collide(me)){
+	    	collisionIndex = houses[i].collide(me);
+	    	if (collisionIndex == 1){
 	    		me.x = me.prevX;
+	    		break;
+	    	} else if (collisionIndex == 2){
 	    		me.y = me.prevY;
 	    		break;
 	    	}
