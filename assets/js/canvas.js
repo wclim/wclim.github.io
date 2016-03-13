@@ -34,7 +34,6 @@ var mouseInt;
 var mouseDown = false;
 canvas.addEventListener('mousedown', function(evt) {
 	if (leftMousePressed(evt)){
-		console.log("sdfsd");
 		mouseInt = setInterval(function(){ 
 			var mousePos = getMousePos(canvas, evt);
 			var camX = -me.x + canvas.width/2;
