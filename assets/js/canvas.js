@@ -23,28 +23,68 @@ var ctx = canvas.getContext('2d');
 
 function getMousePos(canvas, evt) {
 	var rect = canvas.getBoundingClientRect();
-	var camX = -me.x + canvas.width/2;
-    var camY = -me.y + canvas.height/2;
-    if (me.x <= canvas.width/2){
-    	camX = 0;
-    } else if (me.x >= mapWidth - canvas.width/2){
-    	camX = canvas.width - mapWidth;
-    }
-    if (me.y <= canvas.height/2){
-    	camY = 0;
-    } else if (me.y >= mapHeight - canvas.height/2){
-    	camY = canvas.height - mapHeight;
-    }
 	return {
-		x: (evt.clientX - camX) - rect.left - me.width/2,
-		y: (evt.clientY - camY) - rect.top - me.height
+		x: (evt.clientX) - rect.left - me.width/2,
+		y: (evt.clientY) - rect.top - me.height
 	};
 }
 
-canvas.addEventListener('mouseup', function(evt) {
-	var mousePos = getMousePos(canvas, evt);
-	walkTo(me, mousePos.x, mousePos.y);
+/*For mouse click based movements*/
+var mouseInt;
+var mouseDown = false;
+canvas.addEventListener('mousedown', function(evt) {
+	if (leftMousePressed(evt)){
+		console.log("sdfsd");
+		mouseInt = setInterval(function(){ 
+			var mousePos = getMousePos(canvas, evt);
+			var camX = -me.x + canvas.width/2;
+		    var camY = -me.y + canvas.height/2;
+		    if (me.x <= canvas.width/2){
+		    	camX = 0;
+		    } else if (me.x >= mapWidth - canvas.width/2){
+		    	camX = canvas.width - mapWidth;
+		    }
+		    if (me.y <= canvas.height/2){
+		    	camY = 0;
+		    } else if (me.y >= mapHeight - canvas.height/2){
+		    	camY = canvas.height - mapHeight;
+		    }
+			walkTo(me, mousePos.x - camX, mousePos.y - camY); }, 0);
+			mouseDown = true;
+	}
 }, false);
+canvas.addEventListener('mousemove', function(evt) {
+	if(mouseDown){ 
+		clearInterval(mouseInt);
+		mouseInt = setInterval(function(){ 
+			var mousePos = getMousePos(canvas, evt);
+			var camX = -me.x + canvas.width/2;
+		    var camY = -me.y + canvas.height/2;
+		    if (me.x <= canvas.width/2){
+		    	camX = 0;
+		    } else if (me.x >= mapWidth - canvas.width/2){
+		    	camX = canvas.width - mapWidth;
+		    }
+		    if (me.y <= canvas.height/2){
+		    	camY = 0;
+		    } else if (me.y >= mapHeight - canvas.height/2){
+		    	camY = canvas.height - mapHeight;
+		    }
+			walkTo(me, mousePos.x - camX, mousePos.y - camY); }, 0);
+		}
+}, false);
+canvas.addEventListener('mouseup', function(evt) {
+	clearInterval(mouseInt);
+	mouseDown = false;
+}, false);
+
+function leftMousePressed(e)
+{
+    e = e || window.event;
+    var button = e.which || e.button;
+    return button == 1;
+}
+/*End of mouse click based movements*/
 
 var images = {};
 var imageSources = {
@@ -89,8 +129,6 @@ var imageSources = {
 	characterNE1: 		"assets/images/sprites/characters/meNE1.png",
 	characterNE2:  		"assets/images/sprites/characters/meNE2.png"
 };
-
-
 
 var characterDirection = {
 	N: 1,
