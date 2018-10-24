@@ -79,6 +79,44 @@ html, body{
 	#smallScreen {
 		display: none;
 	}
+
+	.nav{
+		/* Affects the UL element */
+		overflow: hidden;
+		display: inline-block;
+		position: fixed;
+		left: 50%;
+		transform: translateX(-50%);
+		top: 15px;
+		z-index: 999;
+		border:groove;
+		border-radius: 15px;
+		min-width: 320px;
+	}
+
+	.nav li{
+		/* Specifying a fallback color and we define CSS3 gradients for the major browsers: */
+		
+		background-color: #f0f0f0;
+		background-image: -webkit-gradient(linear,left top, left bottom,from(#fefefe), color-stop(0.5,#f0f0f0), color-stop(0.51, #e6e6e6));
+		background-image: -moz-linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
+		background-image: -o-linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
+		background-image: -ms-linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
+		background-image: linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
+		
+		border-right: 1px solid rgba(9, 9, 9, 0.125);
+		
+		/* Adding a 1px inset highlight for a more polished efect: */
+		
+		box-shadow: 1px -1px 0 rgba(255, 255, 255, 0.6) inset;
+		-moz-box-shadow: 1px -1px 0 rgba(255, 255, 255, 0.6) inset;
+		-webkit-box-shadow: 1px -1px 0 rgba(255, 255, 255, 0.6) inset;
+		
+		position:relative;
+		
+		float: left;
+		list-style: none;
+	}
 }
 
 /*Tab styles -----------------------------------------------------------------------*/
@@ -150,42 +188,86 @@ html, body{
 }
 
 /*Menu Style ----------------------------------------------------------*/
-.nav{
-	/* Affects the UL element */
-	overflow: hidden;
-	display: inline-block;
-	position: fixed;
-	left: 50%;
-	transform: translateX(-50%);
-	top: 15px;
-	z-index: 999;
-	border:groove;
-	border-radius: 15px;
+@media only screen and (min-width:671px){
+		.nav{
+		/* Affects the UL element */
+		overflow: hidden;
+		display: inline-block;
+		position: fixed;
+		left: 50%;
+		transform: translateX(-50%);
+		top: 15px;
+		z-index: 999;
+		border:groove;
+		border-radius: 15px;
+	}
+
+	.nav li{
+		/* Specifying a fallback color and we define CSS3 gradients for the major browsers: */
+		
+		background-color: #f0f0f0;
+		background-image: -webkit-gradient(linear,left top, left bottom,from(#fefefe), color-stop(0.5,#f0f0f0), color-stop(0.51, #e6e6e6));
+		background-image: -moz-linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
+		background-image: -o-linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
+		background-image: -ms-linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
+		background-image: linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
+		
+		border-right: 1px solid rgba(9, 9, 9, 0.125);
+		
+		/* Adding a 1px inset highlight for a more polished efect: */
+		
+		box-shadow: 1px -1px 0 rgba(255, 255, 255, 0.6) inset;
+		-moz-box-shadow: 1px -1px 0 rgba(255, 255, 255, 0.6) inset;
+		-webkit-box-shadow: 1px -1px 0 rgba(255, 255, 255, 0.6) inset;
+		
+		position:relative;
+		
+		float: left;
+		list-style: none;
+	}
+}
+@media not screen{
+	.nav{
+		/* Affects the UL element */
+		overflow: hidden;
+		display: inline-block;
+		position: fixed;
+		left: 50%;
+		transform: translateX(-50%);
+		top: 15px;
+		z-index: 999;
+		border:groove;
+		border-radius: 15px;
+	}
+
+	.nav li{
+		/* Specifying a fallback color and we define CSS3 gradients for the major browsers: */
+		
+		background-color: #f0f0f0;
+		background-image: -webkit-gradient(linear,left top, left bottom,from(#fefefe), color-stop(0.5,#f0f0f0), color-stop(0.51, #e6e6e6));
+		background-image: -moz-linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
+		background-image: -o-linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
+		background-image: -ms-linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
+		background-image: linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
+		
+		border-right: 1px solid rgba(9, 9, 9, 0.125);
+		
+		/* Adding a 1px inset highlight for a more polished efect: */
+		
+		box-shadow: 1px -1px 0 rgba(255, 255, 255, 0.6) inset;
+		-moz-box-shadow: 1px -1px 0 rgba(255, 255, 255, 0.6) inset;
+		-webkit-box-shadow: 1px -1px 0 rgba(255, 255, 255, 0.6) inset;
+		
+		position:relative;
+		
+		float: left;
+		list-style: none;
+	}
+
 }
 
-.nav li{
-	/* Specifying a fallback color and we define CSS3 gradients for the major browsers: */
-	
-	background-color: #f0f0f0;
-	background-image: -webkit-gradient(linear,left top, left bottom,from(#fefefe), color-stop(0.5,#f0f0f0), color-stop(0.51, #e6e6e6));
-	background-image: -moz-linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
-	background-image: -o-linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
-	background-image: -ms-linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
-	background-image: linear-gradient(#fefefe 0%, #f0f0f0 50%, #e6e6e6 51%);
-	
-	border-right: 1px solid rgba(9, 9, 9, 0.125);
-	
-	/* Adding a 1px inset highlight for a more polished efect: */
-	
-	box-shadow: 1px -1px 0 rgba(255, 255, 255, 0.6) inset;
-	-moz-box-shadow: 1px -1px 0 rgba(255, 255, 255, 0.6) inset;
-	-webkit-box-shadow: 1px -1px 0 rgba(255, 255, 255, 0.6) inset;
-	
-	position:relative;
-	
-	float: left;
-	list-style: none;
-}
+
+
 
 .nav li:after{
 
