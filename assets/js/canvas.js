@@ -354,6 +354,21 @@ function enableTap(){
 	  });
 	  canvas.dispatchEvent(mouseEvent);
 	}, false);
+	document.body.addEventListener("touchstart", function (e) {
+	  if (e.target == canvas) {
+	    e.preventDefault();
+	  }
+	}, false);
+	document.body.addEventListener("touchend", function (e) {
+	  if (e.target == canvas) {
+	    e.preventDefault();
+	  }
+	}, false);
+	document.body.addEventListener("touchmove", function (e) {
+	  if (e.target == canvas) {
+	    e.preventDefault();
+	  }
+	}, false);
 }
 
 // Get the position of a touch relative to the canvas
