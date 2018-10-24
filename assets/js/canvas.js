@@ -16,7 +16,7 @@ var mainLoopRunning = false;
 var canvas = document.getElementById('myCanvas');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-var mapWidth = canvas.width*1.1;
+var mapWidth = Math.max(1500, canvas.width);
 var mapHeight = Math.max(2500, canvas.height);
 var ctx = canvas.getContext('2d');
 
@@ -34,6 +34,8 @@ var mouseInt;
 var mouseDown = false;
 canvas.addEventListener('mousedown', function(evt) {
 	if (leftMousePressed(evt)){
+		me.speed = DEFAULTSPEED;
+		me.walkingTimer = DEFAULTSPEED;
 		mouseInt = setInterval(function(){ 
 			var mousePos = getMousePos(canvas, evt);
 			var camX = -me.x + canvas.width/2;
@@ -141,19 +143,19 @@ var characterDirection = {
 } 
 
 var me = {
-	speed: DEFAULTSPEED, // movement in pixels per second
-	walkingTimer: DEFAULTSPEED,
+	speed: DEFAULTSPEED*0.2, // movement in pixels per second
+	walkingTimer: DEFAULTSPEED*0.2,
 	walkAnimation: 0,
-	direction: characterDirection.S,
+	direction: characterDirection.N,
 	width: 0,
 	height: 0,
 	x: mapWidth/2,
-	y: mapHeight-100,
+	y: mapHeight+100,
 	prevX:0,
 	prevY:0,
-	autoWalk: false,
-	autoWalkX: 0,
-	autoWalkY: 0
+	autoWalk: true,
+	autoWalkX: mapWidth/2,
+	autoWalkY: mapHeight-170
 };
 
 window.onresize = function(event) {
@@ -282,14 +284,15 @@ function load_trees(){
 }
 
 var init = function (callback) {
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+	mapWidth = Math.max(1500, canvas.width);
+	mapHeight = Math.max(2500, canvas.height);
 	if(!onMainRoad(me, roads)){
 		me.x = me.x*(window.innerWidth/canvas.width); //scale character's position on side roads according to map size
 	}else{
-		me.x += 1.1*window.innerWidth/2-1.5*ROADWIDTH/2 - roads[0].x;  //to make character stay on same position on main road
+		me.x += mapWidth/2-1.5*ROADWIDTH/2 - roads[0].x;  //to make character stay on same position on main road
 	}
-	canvas.width  = window.innerWidth;
-    mapWidth = canvas.width*1.1;
-    canvas.height = window.innerHeight;
 	load_character();
 	load_roads_fences();
 	load_houses();
@@ -309,7 +312,7 @@ var init = function (callback) {
 
 var keysDown = {};
 
-function keyDownListener(e) {if (me.autoWalk){keysDown={};me.autoWalk=false;}keysDown[e.keyCode] = true;}
+function keyDownListener(e) {if (me.autoWalk){keysDown={};me.autoWalk=false;}keysDown[e.keyCode] = true;me.speed = DEFAULTSPEED;me.walkingTimer = DEFAULTSPEED;}
 function keyUpListener(e) {delete keysDown[e.keyCode];}
 enableMouse();
 $(window).blur(function() { //to prevent abuse of walking through fences
@@ -349,6 +352,8 @@ var update = function (modifier) {
 		if (me.x == me.autoWalkX && me.y == me.autoWalkY){
 			me.autoWalk = false;
 			keysDown = {};
+			me.speed = DEFAULTSPEED;
+			me.walkingTimer = DEFAULTSPEED;
 		}
 	}
 	if (!((38 in keysDown && 40 in keysDown) || (37 in keysDown && 39 in keysDown))){
@@ -578,44 +583,45 @@ var drawRoads = function(){
 }
 
 var drawTextOnGrass = function(){
-	ctx.font = canvas.width/64 + "px PressStart";
+	var fontSize = Math.max(16,Math.min(canvas.width/64, 30));
+	ctx.font = fontSize + "px PressStart";
 	ctx.fillStyle = "rgba(0,0,0,0.3)";
-	ctx.fillText(TITLE, mapWidth/2-canvas.width/2+29, mapHeight-80);
+	ctx.fillText(TITLE, mapWidth/2-ROADWIDTH*0.75-15-ctx.measureText(TITLE).width, mapHeight-80);
 	ctx.fillStyle = "rgba(255,255,255,0.5)";
-	ctx.fillText(TITLE, mapWidth/2-canvas.width/2+30, mapHeight-81);
+	ctx.fillText(TITLE, mapWidth/2-ROADWIDTH*0.75-15-ctx.measureText(TITLE).width+1, mapHeight-81);
 	ctx.fillStyle = "#51AD88";
-	ctx.fillText(TITLE,mapWidth/2-canvas.width/2+30,mapHeight-83);	
-	ctx.font = canvas.width/64 + "px CodersCrux";
+	ctx.fillText(TITLE,mapWidth/2-ROADWIDTH*0.75-15-ctx.measureText(TITLE).width+1,mapHeight-83);	
+	ctx.font = fontSize + "px CodersCrux";
 	ctx.fillStyle = "rgba(0,0,0,0.6)";
-	ctx.fillText(SUBTITLE, mapWidth/2-canvas.width/2+33, mapHeight-83+ canvas.width/64);
+	ctx.fillText(SUBTITLE, mapWidth/2-ROADWIDTH*0.75-15-ctx.measureText(SUBTITLE).width, mapHeight-83+ fontSize);
 
 	ctx.save();
-	ctx.font = canvas.width/56 + "px CodersCrux";
+	ctx.font = fontSize + "px CodersCrux";
 	ctx.fillStyle = "rgba(0,0,0,0.3)";
-	ctx.fillText("Instructions", (mapWidth/2)+(ROADWIDTH*0.75+39), mapHeight-220);
+	ctx.fillText("Instructions", (mapWidth/2)+(ROADWIDTH*0.75+14), mapHeight-220);
 	ctx.fillStyle = "rgba(255,255,255,0.5)";
-	ctx.fillText("Instructions", (mapWidth/2)+(ROADWIDTH*0.75+40), mapHeight-221);
+	ctx.fillText("Instructions", (mapWidth/2)+(ROADWIDTH*0.75+15), mapHeight-221);
 	ctx.fillStyle = "rgba(96,96,96,1)";
-	ctx.fillText("Instructions", (mapWidth/2)+(ROADWIDTH*0.75+40), mapHeight-222);
+	ctx.fillText("Instructions", (mapWidth/2)+(ROADWIDTH*0.75+15), mapHeight-222);
 	ctx.restore();
 
-	ctx.fillText("Use arrows keys to navigate", (mapWidth/2)+(ROADWIDTH*0.75+40+3.3*canvas.width/64), mapHeight-222 + 2*canvas.width/56);
+	ctx.fillText("Use arrows keys to navigate", (mapWidth/2)+(ROADWIDTH*0.75+15+3.3*fontSize), mapHeight-222 + 2*fontSize);
 	ctx.save();
-	ctx.font = canvas.width/64 + "px WebSymbols";
-	ctx.fillText("(;)", (mapWidth/2)+(ROADWIDTH*0.75+40), mapHeight-222 + 2*canvas.width/56);
-	ctx.fillText(":", (mapWidth/2)+(ROADWIDTH*0.75+40+canvas.width/64), mapHeight-223 + 2*canvas.width/56-canvas.width/64);
+	ctx.font = fontSize + "px WebSymbols";
+	ctx.fillText("(;)", (mapWidth/2)+(ROADWIDTH*0.75+15), mapHeight-222 + 2*fontSize);
+	ctx.fillText(":", (mapWidth/2)+(ROADWIDTH*0.75+15+fontSize), mapHeight-223 + fontSize);
 	ctx.restore();
 
-	ctx.fillText("Enter houses to view different tabs", (mapWidth/2)+(ROADWIDTH*0.75+40+3.3*canvas.width/64), mapHeight-222 + 2*canvas.width/56 + 1.3*canvas.width/64);
+	ctx.fillText("Enter houses to view different tabs", (mapWidth/2)+(ROADWIDTH*0.75+15+3.3*fontSize), mapHeight-222 + 3.5*fontSize);
 	ctx.save();
-	ctx.font = canvas.width/64 + "px WebSymbols";
-	ctx.fillText("n", (mapWidth/2)+(ROADWIDTH*0.75+40+canvas.width/64), mapHeight-222 + 2*canvas.width/56  + 1.3*canvas.width/64);
+	ctx.font = fontSize + "px WebSymbols";
+	ctx.fillText("n", (mapWidth/2)+(ROADWIDTH*0.75+15+fontSize*0.9), mapHeight-222 + 3.5*fontSize);
 	ctx.restore();
 
-	ctx.fillText("Press Esc to close tabs", (mapWidth/2)+(ROADWIDTH*0.75+40+3.3*canvas.width/64), mapHeight-222 + 2*canvas.width/56 + 2.6*canvas.width/64);
+	ctx.fillText("Press Esc to close tabs", (mapWidth/2)+(ROADWIDTH*0.75+15+3.3*fontSize), mapHeight-222 + 5*fontSize);
 	ctx.save();
-	ctx.font = canvas.width/64 + "px WebSymbols";
-	ctx.fillText("h", (mapWidth/2)+(ROADWIDTH*0.75+40+canvas.width/64), mapHeight-222 + 2*canvas.width/56  + 2.6*canvas.width/64);
+	ctx.font = fontSize + "px WebSymbols";
+	ctx.fillText("h", (mapWidth/2)+(ROADWIDTH*0.75+15+fontSize*0.9), mapHeight-222 + 5*fontSize);
 	ctx.restore();
 }
 
@@ -630,11 +636,9 @@ var drawTextOnRoads = function(){
 }
 
 var drawTrees = function(){
-	if(canvas.width>488){
-		ctx.drawImage(images.bigTreeImage, mapWidth/2-canvas.width/2-55, mapHeight-200);
-	}else{
-		ctx.drawImage(images.bigTreeImage, mapWidth/2-1.5*ROADWIDTH/2-75, mapHeight-200);
-	}
+	var fontSize = Math.max(16,Math.min(canvas.width/64, 30));
+	ctx.font = fontSize + "px PressStart";
+	ctx.drawImage(images.bigTreeImage, mapWidth/2-ROADWIDTH*0.75-ctx.measureText(TITLE).width-100, mapHeight-200);
 	for (var i=0; i<trees.length; i++){
 		ctx.drawImage(eval("images.treeImage" + trees[i].type), trees[i].x, trees[i].y);
 	}
@@ -736,9 +740,9 @@ var main = function () {
 	update(delta / 1000);
 	then = now;
 	render();
-	if (window.innerWidth < 672){
+	/*if (window.innerWidth < 672){
 		mainLoopRunning = false;
-	}
+	}*/
 	if (mainLoopRunning){
 		requestAnimationFrame(main);
 	}else{
