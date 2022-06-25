@@ -662,16 +662,22 @@ var drawTextOnGrass = function(){
 	ctx.fillText(":", (mapWidth/2)+(ROADWIDTH*0.75+15+fontSize), mapHeight-223 + fontSize);
 	ctx.restore();
 
-	ctx.fillText("Enter houses to view different tabs", (mapWidth/2)+(ROADWIDTH*0.75+15+3.3*fontSize), mapHeight-222 + 3.5*fontSize);
+	ctx.fillText("Or use mouse clicks/phone taps to navigate", (mapWidth/2)+(ROADWIDTH*0.75+15+3.3*fontSize), mapHeight-222 + 3.4*fontSize);
 	ctx.save();
 	ctx.font = fontSize + "px WebSymbols";
-	ctx.fillText("n", (mapWidth/2)+(ROADWIDTH*0.75+15+fontSize*0.9), mapHeight-222 + 3.5*fontSize);
+	ctx.fillText("?", (mapWidth/2)+(ROADWIDTH*0.75+15+fontSize*1.2), mapHeight-222 + 3.4*fontSize);
 	ctx.restore();
 
-	ctx.fillText("Press Esc to close tabs", (mapWidth/2)+(ROADWIDTH*0.75+15+3.3*fontSize), mapHeight-222 + 5*fontSize);
+	ctx.fillText("Enter houses to view different tabs", (mapWidth/2)+(ROADWIDTH*0.75+15+3.3*fontSize), mapHeight-222 + 4.8*fontSize);
 	ctx.save();
 	ctx.font = fontSize + "px WebSymbols";
-	ctx.fillText("h", (mapWidth/2)+(ROADWIDTH*0.75+15+fontSize*0.9), mapHeight-222 + 5*fontSize);
+	ctx.fillText("n", (mapWidth/2)+(ROADWIDTH*0.75+15+fontSize*0.9), mapHeight-222 + 4.8*fontSize);
+	ctx.restore();
+
+	ctx.fillText("Press Esc to close tabs", (mapWidth/2)+(ROADWIDTH*0.75+15+3.3*fontSize), mapHeight-222 + 6.2*fontSize);
+	ctx.save();
+	ctx.font = fontSize + "px WebSymbols";
+	ctx.fillText("h", (mapWidth/2)+(ROADWIDTH*0.75+15+fontSize*0.9), mapHeight-222 + 6.2*fontSize);
 	ctx.restore();
 }
 
