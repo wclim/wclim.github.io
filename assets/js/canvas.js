@@ -312,7 +312,7 @@ var init = function (callback) {
 
 var keysDown = {};
 
-function keyDownListener(e) {if (me.autoWalk){keysDown={};me.autoWalk=false;}keysDown[e.keyCode] = true;me.speed = DEFAULTSPEED;me.walkingTimer = DEFAULTSPEED;}
+function keyDownListener(e) {if (me.autoWalk){keysDown={};me.autoWalk=false;}keysDown[e.keyCode] = true;me.speed = DEFAULTSPEED;}
 function keyUpListener(e) {delete keysDown[e.keyCode];}
 enableMouse();
 enableTap();
