@@ -4,7 +4,7 @@ var roadType = {
 	sideRight: 2
 }
 
-var fence = function (type, x, y, length, parent) {
+var fencing = function (type, x, y, length, parent) {
 	this.type = type; //0 for horizontal on left of main road, 1 for vertical, 2 for horizontal on right of main road
 	this.length = length;
 	this.x = x;
@@ -42,7 +42,7 @@ var house = function(data){
 	this.doorY2 = this.doorY + 35;
 }
 
-fence.prototype.collide = function(character) { //returns 0 for no collision, returns 1 for vertical fence collision, returns 2 for horizontal fence collision
+fencing.prototype.collide = function(character) { //returns 0 for no collision, returns 1 for vertical fencing collision, returns 2 for horizontal fencing collision
 	if (this.type == 0 || this.type == 2){
 		if (this.collideFromSide(character)){
 			return 1;
@@ -64,7 +64,7 @@ fence.prototype.collide = function(character) { //returns 0 for no collision, re
 	return 0;
 };
 
-fence.prototype.collideFromSide = function(character) {
+fencing.prototype.collideFromSide = function(character) {
 	if (character.prevX > this.x + this.length + images.fenceImageVer.naturalWidth && (character.x) < this.x + this.length + images.fenceImageVer.naturalWidth
 		&& (character.y + character.height/1.6) < this.y + images.fenceImageHor.naturalHeight 
 			&& (character.y + character.height) > this.y){

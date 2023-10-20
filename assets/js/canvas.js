@@ -208,20 +208,20 @@ function load_roads_fences(){
 		if(roads[i].type==roadType.main) continue;
 		currRoad = roads[i];
 		if(currRoad.type==roadType.sideLeft){
-			fences.push(new fence(0, currRoad.x, currRoad.y-images.fenceImageHor.naturalHeight+2, currRoad.width-images.fenceImageVer.naturalWidth, currRoad));
-			fences.push(new fence(0, currRoad.x, currRoad.y2, currRoad.width-images.fenceImageVer.naturalWidth, currRoad));
-			fences.push(new fence(1, mapWidth/2-1.5*ROADWIDTH/2-images.fenceImageVer.naturalWidth, currRoad.y2, startYLeft-currRoad.y2, mainRoad));
+			fences.push(new fencing(0, currRoad.x, currRoad.y-images.fenceImageHor.naturalHeight+2, currRoad.width-images.fenceImageVer.naturalWidth, currRoad));
+			fences.push(new fencing(0, currRoad.x, currRoad.y2, currRoad.width-images.fenceImageVer.naturalWidth, currRoad));
+			fences.push(new fencing(1, mapWidth/2-1.5*ROADWIDTH/2-images.fenceImageVer.naturalWidth, currRoad.y2, startYLeft-currRoad.y2, mainRoad));
 			startYLeft = currRoad.y;
 			if (currRoad.isLastOne()){
-				fences.push(new fence(1,  mapWidth/2-1.5*ROADWIDTH/2-images.fenceImageVer.naturalWidth, 0, startYLeft, mainRoad));
+				fences.push(new fencing(1,  mapWidth/2-1.5*ROADWIDTH/2-images.fenceImageVer.naturalWidth, 0, startYLeft, mainRoad));
 			}
 		}else{
-			fences.push(new fence(2, currRoad.x+images.fenceImageVer.naturalWidth, currRoad.y-images.fenceImageHor.naturalHeight+2, currRoad.width, currRoad));
-			fences.push(new fence(2, currRoad.x+images.fenceImageVer.naturalWidth, currRoad.y2, currRoad.width-images.fenceImageVer.naturalWidth, currRoad));
-			fences.push(new fence(1, mapWidth/2+1.5*ROADWIDTH/2, currRoad.y2, startYRight-currRoad.y2, mainRoad));
+			fences.push(new fencing(2, currRoad.x+images.fenceImageVer.naturalWidth, currRoad.y-images.fenceImageHor.naturalHeight+2, currRoad.width, currRoad));
+			fences.push(new fencing(2, currRoad.x+images.fenceImageVer.naturalWidth, currRoad.y2, currRoad.width-images.fenceImageVer.naturalWidth, currRoad));
+			fences.push(new fencing(1, mapWidth/2+1.5*ROADWIDTH/2, currRoad.y2, startYRight-currRoad.y2, mainRoad));
 			startYRight = currRoad.y;
 			if (currRoad.isLastOne()){
-				fences.push(new fence(1,  mapWidth/2+1.5*ROADWIDTH/2, 0, startYRight, mainRoad));
+				fences.push(new fencing(1,  mapWidth/2+1.5*ROADWIDTH/2, 0, startYRight, mainRoad));
 			}
 		}
 		
