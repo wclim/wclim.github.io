@@ -195,7 +195,7 @@ function load_roads_fences(){
 	//roadType: 0 for main road, 1 for left side road, 2 for right side road
 	var roadsDetails = [[1,0,mapHeight-ROADWIDTH - 900, mapWidth/2-0.75*ROADWIDTH, ROADWIDTH],
 					[0, mapWidth/2-1.5*ROADWIDTH/2,0, 1.5*ROADWIDTH, mapHeight],
-					[2, mapWidth/2+0.75*ROADWIDTH,mapHeight-ROADWIDTH-300, mapWidth/2, ROADWIDTH],
+					[2, mapWidth/2+0.75*ROADWIDTH,mapHeight-ROADWIDTH-350, mapWidth/2, ROADWIDTH],
 					[1, 0,mapHeight-ROADWIDTH - 150, mapWidth/2-0.75*ROADWIDTH, ROADWIDTH]];
 
 	for (var i in roadsDetails){
@@ -232,8 +232,8 @@ function load_houses(){
 	houses = [];
 	var houseDetails = [[20,mapHeight-ROADWIDTH - 150 - 100, images.houseroof.naturalWidth, images.houseroof.naturalHeight, "aboutme", "About Me"],
 					[20 + images.houseroof.naturalWidth + 40,mapHeight-ROADWIDTH - 150 - 100, images.houseroof.naturalWidth, images.houseroof.naturalHeight, 'cv', "CV/Resume"],
-					[mapWidth-images.houseroof.naturalWidth-20-images.houseroof.naturalWidth - 40, mapHeight-ROADWIDTH-300-100, images.houseroof.naturalWidth, images.houseroof.naturalHeight, 'skills', "Skills"],
-					[mapWidth-images.houseroof.naturalWidth-20, mapHeight-ROADWIDTH-300-100, images.houseroof.naturalWidth, images.houseroof.naturalHeight, 'contact', "Contact Me"]];
+					[mapWidth-images.houseroof.naturalWidth-20-images.houseroof.naturalWidth - 40, mapHeight-ROADWIDTH-350-100, images.houseroof.naturalWidth, images.houseroof.naturalHeight, 'skills', "Skills"],
+					[mapWidth-images.houseroof.naturalWidth-20, mapHeight-ROADWIDTH-350-100, images.houseroof.naturalWidth, images.houseroof.naturalHeight, 'contact', "Contact Me"]];
 
 	for (var i in houseDetails){
 		houses.push(new house(houseDetails[i]));
@@ -266,15 +266,15 @@ function load_trees(){
 	treeCoordinates.push([mainRoad.x2+400, 1000]);
 	treeCoordinates.push([mainRoad.x2+800, 1150]);
 	treeCoordinates.push([mainRoad.x2+70, 1450]);
-	treeCoordinates.push([mainRoad.x2+500, 1750]);
-	treeCoordinates.push([mainRoad.x2+77, 1700]);
-	treeCoordinates.push([mainRoad.x2+370, mapHeight - 307]);
-	treeCoordinates.push([mainRoad.x2+320, mapHeight - 307]);
-	treeCoordinates.push([mainRoad.x2+270, mapHeight - 307]);
-	treeCoordinates.push([mainRoad.x2+220, mapHeight - 307]);
-	treeCoordinates.push([mainRoad.x2+170, mapHeight - 307]);
-	treeCoordinates.push([mainRoad.x2+120, mapHeight - 307]);
-	treeCoordinates.push([mainRoad.x2+70, mapHeight - 307]);
+	treeCoordinates.push([mainRoad.x2+500, 1700]);
+	treeCoordinates.push([mainRoad.x2+77, 1650]);
+	treeCoordinates.push([mainRoad.x2+370, mapHeight - 357]);
+	treeCoordinates.push([mainRoad.x2+320, mapHeight - 357]);
+	treeCoordinates.push([mainRoad.x2+270, mapHeight - 357]);
+	treeCoordinates.push([mainRoad.x2+220, mapHeight - 357]);
+	treeCoordinates.push([mainRoad.x2+170, mapHeight - 357]);
+	treeCoordinates.push([mainRoad.x2+120, mapHeight - 357]);
+	treeCoordinates.push([mainRoad.x2+70, mapHeight - 357]);
 	treeCoordinates.push([mainRoad.x2+320, mapHeight - 30]);
 
 	for (var i=0; i<treeCoordinates.length; i++){
@@ -648,14 +648,21 @@ var drawTextOnGrass = function(){
 	ctx.save();
 	ctx.font = fontSize + "px CodersCrux";
 	ctx.fillStyle = "rgba(0,0,0,0.3)";
-	ctx.fillText("Instructions", (mapWidth/2)+(ROADWIDTH*0.75+14), mapHeight-220);
+	ctx.fillText("Instructions", (mapWidth/2)+(ROADWIDTH*0.75+14), mapHeight-270);
 	ctx.fillStyle = "rgba(255,255,255,0.5)";
-	ctx.fillText("Instructions", (mapWidth/2)+(ROADWIDTH*0.75+15), mapHeight-221);
+	ctx.fillText("Instructions", (mapWidth/2)+(ROADWIDTH*0.75+15), mapHeight-271);
 	ctx.fillStyle = "rgba(96,96,96,1)";
-	ctx.fillText("Instructions", (mapWidth/2)+(ROADWIDTH*0.75+15), mapHeight-222);
+	ctx.fillText("Instructions", (mapWidth/2)+(ROADWIDTH*0.75+15), mapHeight-272);
 	ctx.restore();
 
-	ctx.fillText("Use arrows keys to navigate", (mapWidth/2)+(ROADWIDTH*0.75+15+3.3*fontSize), mapHeight-222 + 2*fontSize);
+	ctx.fillText("Please disable adblock so my google analytics works", (mapWidth/2)+(ROADWIDTH*0.75+15+3.3*fontSize), mapHeight-222 - 0.7*fontSize);
+	ctx.fillText("Dont't worry, I do not run ads", (mapWidth/2)+(ROADWIDTH*0.75+15+3.3*fontSize), mapHeight-222 - 0.1*fontSize);
+	ctx.save();
+	ctx.font = fontSize + "px WebSymbols";
+	ctx.fillText("N", (mapWidth/2)+(ROADWIDTH*0.75+15+fontSize), mapHeight-222 - 0.4*fontSize);
+	ctx.restore();
+
+	ctx.fillText("Use arrow keys to navigate", (mapWidth/2)+(ROADWIDTH*0.75+15+3.3*fontSize), mapHeight-222 + 2*fontSize);
 	ctx.save();
 	ctx.font = fontSize + "px WebSymbols";
 	ctx.fillText("(;)", (mapWidth/2)+(ROADWIDTH*0.75+15), mapHeight-222 + 2*fontSize);
@@ -665,19 +672,19 @@ var drawTextOnGrass = function(){
 	ctx.fillText("Or use mouse clicks/phone taps to navigate", (mapWidth/2)+(ROADWIDTH*0.75+15+3.3*fontSize), mapHeight-222 + 3.4*fontSize);
 	ctx.save();
 	ctx.font = fontSize + "px WebSymbols";
-	ctx.fillText("?", (mapWidth/2)+(ROADWIDTH*0.75+15+fontSize*1.2), mapHeight-222 + 3.4*fontSize);
+	ctx.fillText("?", (mapWidth/2)+(ROADWIDTH*0.75+15+fontSize*1.25), mapHeight-222 + 3.4*fontSize);
 	ctx.restore();
 
 	ctx.fillText("Enter houses to view different tabs", (mapWidth/2)+(ROADWIDTH*0.75+15+3.3*fontSize), mapHeight-222 + 4.8*fontSize);
 	ctx.save();
 	ctx.font = fontSize + "px WebSymbols";
-	ctx.fillText("n", (mapWidth/2)+(ROADWIDTH*0.75+15+fontSize*0.9), mapHeight-222 + 4.8*fontSize);
+	ctx.fillText("n", (mapWidth/2)+(ROADWIDTH*0.75+15+fontSize), mapHeight-222 + 4.8*fontSize);
 	ctx.restore();
 
 	ctx.fillText("Press Esc to close tabs", (mapWidth/2)+(ROADWIDTH*0.75+15+3.3*fontSize), mapHeight-222 + 6.2*fontSize);
 	ctx.save();
 	ctx.font = fontSize + "px WebSymbols";
-	ctx.fillText("h", (mapWidth/2)+(ROADWIDTH*0.75+15+fontSize*0.9), mapHeight-222 + 6.2*fontSize);
+	ctx.fillText("h", (mapWidth/2)+(ROADWIDTH*0.75+15+fontSize), mapHeight-222 + 6.2*fontSize);
 	ctx.restore();
 }
 
